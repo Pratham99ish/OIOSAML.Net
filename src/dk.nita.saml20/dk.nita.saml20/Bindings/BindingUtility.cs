@@ -1,11 +1,11 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Properties;
+using Identity.Saml.config;
+using Identity.Saml.Properties;
 using Microsoft.Extensions.DependencyInjection;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.Configuration;
 
-namespace dk.nita.saml20.Bindings
+namespace Identity.Saml.Bindings
 {
     /// <summary>
     /// Utility functions for use in binding implementations.

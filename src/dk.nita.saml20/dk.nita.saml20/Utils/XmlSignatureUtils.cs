@@ -4,12 +4,12 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Xml;
-using dk.nita.saml20.config;
-using Signature = dk.nita.saml20.Schema.XmlDSig.Signature;
+using Identity.Saml.config;
+using Signature = Identity.Saml.Schema.XmlDSig.Signature;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace dk.nita.saml20.Utils
+namespace Identity.Saml.Utils
 {
     ///<summary>
     ///</summary>

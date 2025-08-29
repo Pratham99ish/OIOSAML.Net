@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using System.Configuration;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Serialization;
 using Saml2.Properties;
 
-namespace dk.nita.saml20.config
+namespace Identity.Saml.config
 {
     /// <summary>
     /// Common implementation of X509 certificate references used in configuration files. 

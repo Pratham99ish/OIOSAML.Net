@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Http;
 using System.Xml;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
-using dk.nita.saml20.Logging;
-using dk.nita.saml20.Schema.Metadata;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Logging;
+using Identity.Saml.Schema.Metadata;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
 
-namespace dk.nita.saml20.Bindings
+namespace Identity.Saml.Bindings
 {
     /// <summary>
     /// Parses the response messages related to the HTTP POST binding.

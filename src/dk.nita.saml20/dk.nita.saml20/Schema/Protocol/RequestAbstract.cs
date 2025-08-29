@@ -1,10 +1,10 @@
 using System;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Schema.XmlDSig;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Schema.XmlDSig;
+using Identity.Saml.Utils;
 
-namespace dk.nita.saml20.Schema.Protocol
+namespace Identity.Saml.Schema.Protocol
 {
     /// <summary>
     /// All SAML requests are of types that are derived from the abstract RequestAbstractType complex type.

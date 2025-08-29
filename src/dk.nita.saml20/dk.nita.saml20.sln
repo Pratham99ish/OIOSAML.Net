@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36408.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dk.nita.saml20", "dk.nita.saml20\dk.nita.saml20.csproj", "{55520059-38BB-48BB-A30E-BFD385293D78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Saml", "dk.nita.saml20\Identity.Saml.csproj", "{55520059-38BB-48BB-A30E-BFD385293D78}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityProviderDemo", "IdentityProviderDemo\IdentityProviderDemo.csproj", "{83B75533-8D8E-4470-960E-B575E49393A1}"
 EndProject

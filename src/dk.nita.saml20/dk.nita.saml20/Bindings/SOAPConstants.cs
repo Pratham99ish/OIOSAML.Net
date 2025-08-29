@@ -1,4 +1,4 @@
-﻿namespace dk.nita.saml20.Bindings
+﻿namespace Identity.Saml.Bindings
 {
     /// <summary>
     /// Constants related to the HTTP SOAP binding

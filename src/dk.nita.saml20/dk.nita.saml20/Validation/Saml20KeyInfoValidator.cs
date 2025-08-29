@@ -1,9 +1,9 @@
 using System;
 using System.Xml;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Schema.XmlDSig;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Schema.XmlDSig;
 
-namespace dk.nita.saml20.Validation
+namespace Identity.Saml.Validation
 {
     internal class Saml20KeyInfoValidator
     {

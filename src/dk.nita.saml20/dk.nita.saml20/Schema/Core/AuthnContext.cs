@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.Core
+namespace Identity.Saml.Schema.Core
 {
     /// <summary>
     /// The &lt;AuthnContext&gt; element specifies the context of an authentication event. The element can contain

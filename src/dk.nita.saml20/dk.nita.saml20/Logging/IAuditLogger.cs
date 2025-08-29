@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace dk.nita.saml20.Logging
+namespace Identity.Saml.Logging
 {
     /// <summary>
     /// Defines the behaviour of an audit logger that logs an audit trail

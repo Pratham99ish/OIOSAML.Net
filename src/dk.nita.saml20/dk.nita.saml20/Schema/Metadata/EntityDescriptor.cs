@@ -1,9 +1,9 @@
 using System;
 using System.Xml;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.XmlDSig;
+using Identity.Saml.Schema.XmlDSig;
 
-namespace dk.nita.saml20.Schema.Metadata
+namespace Identity.Saml.Schema.Metadata
 {
     /// <summary>
     /// The &lt;EntityDescriptor&gt; element specifies metadata for a single SAML entity. A single entity may act

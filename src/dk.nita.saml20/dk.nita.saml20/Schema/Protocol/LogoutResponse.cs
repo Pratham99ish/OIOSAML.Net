@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.Protocol
+namespace Identity.Saml.Schema.Protocol
 {
     /// <summary>
     /// The SAML LogoutResponse

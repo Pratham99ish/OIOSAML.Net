@@ -4,16 +4,18 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Schema.Metadata;
-using dk.nita.saml20.Utils;
-using dk.nita.saml20.Bindings.SignatureProviders;
+using Identity.Saml.config;
+using Identity.Saml.Configuration;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Schema.Metadata;
+using Identity.Saml.Schema.XmlDSig;
+using Identity.Saml.Utils;
+using Identity.Saml.Bindings.SignatureProviders;
 using System.Linq;
-using Endpoint = dk.nita.saml20.Schema.Metadata.Endpoint;
-using IDPEndPointElement = dk.nita.saml20.Schema.Metadata.IDPEndPointElement;
+using Endpoint = Identity.Saml.Schema.Metadata.Endpoint;
+using IDPEndPointElement = Identity.Saml.Schema.Metadata.IDPEndPointElement;
 
-namespace dk.nita.saml20
+namespace Identity.Saml
 {
     /// <summary>
     /// The Saml20MetadataDocument class handles functionality related to the &lt;EntityDescriptor&gt; element.
@@ -59,7 +61,7 @@ namespace dk.nita.saml20
         /// <param name="config">The config.</param>
         /// <param name="keyinfos">key information for the service provider certificates.</param>
         /// <param name="sign">if set to <c>true</c> the metadata document will be signed.</param>
-        public Saml20MetadataDocument(SAML20FederationConfig config, IEnumerable<dk.nita.saml20.Schema.XmlDSig.KeyInfo> keyinfos, bool sign)
+        public Saml20MetadataDocument(SAML20FederationConfig config, IEnumerable<Identity.Saml.Schema.XmlDSig.KeyInfo> keyinfos, bool sign)
             : this(sign)
         {
             ConvertToMetadata(config, keyinfos);
@@ -80,7 +82,7 @@ namespace dk.nita.saml20
             spDescriptor.AuthnRequestsSigned = XmlConvert.ToString(true);
             spDescriptor.WantAssertionsSigned = XmlConvert.ToString(true);
 
-            var baseURL = new Uri(config.ServiceProvider.Server);
+            var baseURL = config.ServiceProvider.Server;
             var logoutServiceEndpoints = new List<Endpoint>();
             var signonServiceEndpoints = new List<IndexedEndpoint>();
             var artifactResolutionEndpoints = new List<IndexedEndpoint>(2);
@@ -94,7 +96,7 @@ namespace dk.nita.saml20
                         {
                             index = endpoint.EndPointIndex,
                             isDefault = true,
-                            Location = new Uri(baseURL, endpoint.LocalPath).ToString(),
+                            Location = baseURL + endpoint.LocalPath,
                             Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_Post)
                         };
                         signonServiceEndpoints.Add(loginEndpoint);
@@ -110,16 +112,16 @@ namespace dk.nita.saml20
                     case "LOGOUT":
                         var logoutEndpointPost = new Endpoint
                         {
-                            Location = new Uri(baseURL, endpoint.LocalPath).ToString(),
-                            ResponseLocation = new Uri(baseURL, endpoint.LocalPath).ToString(),
+                            Location = baseURL + endpoint.LocalPath,
+                            ResponseLocation = baseURL + endpoint.LocalPath,
                             Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_Post)
                         };
                         logoutServiceEndpoints.Add(logoutEndpointPost);
 
                         var logoutEndpointRedirect = new Endpoint
                         {
-                            Location = new Uri(baseURL, endpoint.LocalPath).ToString(),
-                            ResponseLocation = new Uri(baseURL, endpoint.LocalPath).ToString(),
+                            Location = baseURL + endpoint.LocalPath,
+                            ResponseLocation = baseURL + endpoint.LocalPath,
                             Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_Redirect)
                         };
                         logoutServiceEndpoints.Add(logoutEndpointRedirect);
@@ -135,8 +137,8 @@ namespace dk.nita.saml20
                     case "SOAPLOGOUT":
                         var logoutEndpointSoap = new Endpoint
                         {
-                            Location = new Uri(baseURL, endpoint.LocalPath).ToString(),
-                            ResponseLocation = new Uri(baseURL, endpoint.LocalPath).ToString(),
+                            Location = baseURL + endpoint.LocalPath,
+                            ResponseLocation = baseURL + endpoint.LocalPath,
                             Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_SOAP)
                         };
                         logoutServiceEndpoints.Add(logoutEndpointSoap);

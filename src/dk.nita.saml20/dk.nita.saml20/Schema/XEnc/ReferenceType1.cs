@@ -2,7 +2,7 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.XEnc
+namespace Identity.Saml.Schema.XEnc
 {
     /// <summary>
     /// DataReference elements are used to refer to EncryptedData elements that were encrypted 

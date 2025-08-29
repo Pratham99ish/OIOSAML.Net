@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 
-namespace dk.nita.saml20.Specification
+namespace Identity.Saml.Specification
 {
     /// <summary>
     /// Specification interface for certificate validation

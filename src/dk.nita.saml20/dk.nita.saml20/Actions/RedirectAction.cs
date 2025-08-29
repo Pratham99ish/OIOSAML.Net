@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
-using dk.nita.saml20.protocol;
+using Identity.Saml.Protocol;
 
-namespace dk.nita.saml20.Actions
+namespace Identity.Saml.Actions
 {
     /// <summary>
     /// Performs redirect after login and logout

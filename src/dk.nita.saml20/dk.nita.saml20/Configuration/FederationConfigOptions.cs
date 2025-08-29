@@ -1,4 +1,4 @@
-namespace dk.nita.saml20.Configuration
+namespace Identity.Saml.Configuration
 {
     public class FederationConfigOptions
     {

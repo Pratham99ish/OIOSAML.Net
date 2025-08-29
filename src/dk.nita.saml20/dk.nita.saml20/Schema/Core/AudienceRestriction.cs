@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.Core
+namespace Identity.Saml.Schema.Core
 {
     /// <summary>
     /// The &lt;AudienceRestriction&gt; element specifies that the assertion is addressed to one or more

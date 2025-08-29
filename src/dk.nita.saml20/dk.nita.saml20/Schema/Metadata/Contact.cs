@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.Metadata
+namespace Identity.Saml.Schema.Metadata
 {
     /// <summary>
     /// The &lt;ContactPerson&gt; element specifies basic contact information about a person responsible in some

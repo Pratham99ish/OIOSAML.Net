@@ -1,8 +1,8 @@
 using System;
 using System.Diagnostics;
-using dk.nita.saml20.Properties;
+using Identity.Saml.Properties;
 
-namespace dk.nita.saml20.Utils
+namespace Identity.Saml.Utils
 {
     /// <summary>
     /// Trace class. Can be used to trace. To ensure that tracing is enabled, you should make a call to "ShouldTrace"
@@ -11,7 +11,7 @@ namespace dk.nita.saml20.Utils
     ///    <system.diagnostics>
     ///    <trace autoflush="true" ></trace>
     ///    <sources>
-    ///       <source name="dk.nita.saml20" switchValue="Verbose">
+    ///       <source name="Identity.Saml" switchValue="Verbose">
     ///            <listeners>
     ///                <add name="trace"/>
     ///            </listeners>
@@ -29,7 +29,7 @@ namespace dk.nita.saml20.Utils
 
         static Trace()
         {
-            _source = new TraceSource("dk.nita.saml20");
+            _source = new TraceSource("Identity.Saml");
         }
 
         /// <summary>

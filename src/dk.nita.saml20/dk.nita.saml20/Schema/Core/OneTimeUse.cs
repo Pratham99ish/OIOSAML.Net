@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.Core
+namespace Identity.Saml.Schema.Core
 {
     /// <summary>
     /// In general, relying parties may choose to retain assertions, or the information they contain in some other

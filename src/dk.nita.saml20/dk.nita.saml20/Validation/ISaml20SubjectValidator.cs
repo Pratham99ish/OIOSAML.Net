@@ -1,6 +1,6 @@
-using dk.nita.saml20.Schema.Core;
+using Identity.Saml.Schema.Core;
 
-namespace dk.nita.saml20.Validation
+namespace Identity.Saml.Validation
 {
     interface ISaml20SubjectValidator
     {

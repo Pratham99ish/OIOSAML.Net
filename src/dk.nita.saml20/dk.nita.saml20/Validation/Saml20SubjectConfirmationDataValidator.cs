@@ -1,8 +1,8 @@
 using System;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Utils;
 
-namespace dk.nita.saml20.Validation
+namespace Identity.Saml.Validation
 {
     internal class Saml20SubjectConfirmationDataValidator : ISaml20SubjectConfirmationDataValidator
     {

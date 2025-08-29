@@ -1,9 +1,9 @@
 using System;
 using System.Xml;
 using System.Xml.Serialization;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Utils;
 
-namespace dk.nita.saml20.Schema.Core
+namespace Identity.Saml.Schema.Core
 {
     /// <summary>
     /// The &lt;SubjectConfirmationData&gt; element has the SubjectConfirmationDataType complex type. It

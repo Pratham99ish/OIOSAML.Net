@@ -2,7 +2,7 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.Protocol
+namespace Identity.Saml.Schema.Protocol
 {
     /// <summary>
     /// The recipient of an &lt;ArtifactResolve&gt; message MUST respond with an &lt;ArtifactResponse&gt;

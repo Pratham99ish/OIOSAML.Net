@@ -3,14 +3,14 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
-using dk.nita.saml20.config;
+using Identity.Saml.config;
 using Saml2.Properties;
 using System.Security.Cryptography.Xml;
 using System.Collections.Generic;
-using dk.nita.saml20.Configuration;
-using dk.nita.saml20.Schema.XmlDSig;
+using Identity.Saml.Configuration;
+using Identity.Saml.Schema.XmlDSig;
 
-namespace dk.nita.saml20.protocol
+namespace Identity.Saml.Protocol
 {
     /// <summary>
     /// The handler that exposes a metadata endpoint to the other parties of the federation.
@@ -62,7 +62,7 @@ namespace dk.nita.saml20.protocol
 
         private void CreateMetadataDocument(HttpContext context, SAML20FederationConfigOptions config, List<X509Certificate2> signingCertificates, bool sign, string encoding)
         {
-            var keyinfos = new List<dk.nita.saml20.Schema.XmlDSig.KeyInfo>();
+            var keyinfos = new List<Identity.Saml.Schema.XmlDSig.KeyInfo>();
             foreach (var certificate in signingCertificates)
             {
                 var x509Data = new X509Data
@@ -70,7 +70,7 @@ namespace dk.nita.saml20.protocol
                     Items = new object[] { certificate.RawData },
                     ItemsElementName = new[] { ItemsChoiceType.X509Certificate }
                 };
-                var keyinfo = new dk.nita.saml20.Schema.XmlDSig.KeyInfo
+                var keyinfo = new Identity.Saml.Schema.XmlDSig.KeyInfo
                 {
                     Items = new object[] { x509Data }
                 };

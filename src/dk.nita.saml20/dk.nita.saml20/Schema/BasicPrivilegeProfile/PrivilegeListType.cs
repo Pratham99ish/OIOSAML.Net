@@ -1,4 +1,4 @@
-﻿namespace dk.nita.saml20.Schema.BasicPrivilegeProfile
+﻿namespace Identity.Saml.Schema.BasicPrivilegeProfile
 {
     /// <summary>
     /// Representing the intermediate model of the basic privilege profile

@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.XmlDSig
+namespace Identity.Saml.Schema.XmlDSig
 {
     /// <summary>
     /// RSA key values have two fields: Modulus and Exponent. 

@@ -7,13 +7,13 @@ using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Web;
 using System.Xml;
-using dk.nita.saml20.Bindings.SignatureProviders;
-using dk.nita.saml20.Schema.Metadata;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
-using CONSTS = dk.nita.saml20.Bindings.HttpRedirectBindingConstants;
+using Identity.Saml.Bindings.SignatureProviders;
+using Identity.Saml.Schema.Metadata;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
+using CONSTS = Identity.Saml.Bindings.HttpRedirectBindingConstants;
 
-namespace dk.nita.saml20.Bindings
+namespace Identity.Saml.Bindings
 {
     /// <summary>
     /// Parses and validates the query parameters of a HttpRedirectBinding. [SAMLBind] section 3.4.

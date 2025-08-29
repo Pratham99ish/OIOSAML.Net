@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Configuration;
-using dk.nita.saml20.Bindings;
-using dk.nita.saml20.Actions;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
-using dk.nita.saml20.Bindings.SignatureProviders;
+using Identity.Saml.config;
+using Identity.Saml.Configuration;
+using Identity.Saml.Bindings;
+using Identity.Saml.Actions;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
+using Identity.Saml.Bindings.SignatureProviders;
 using System.Xml;
 using System;
 using System.IO;
@@ -14,7 +14,7 @@ using System.Text;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
-namespace dk.nita.saml20.Controllers
+namespace Identity.Saml.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

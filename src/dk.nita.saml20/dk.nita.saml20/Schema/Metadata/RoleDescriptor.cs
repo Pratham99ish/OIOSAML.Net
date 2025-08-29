@@ -1,10 +1,10 @@
 using System;
 using System.Xml;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.XmlDSig;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Schema.XmlDSig;
+using Identity.Saml.Utils;
 
-namespace dk.nita.saml20.Schema.Metadata
+namespace Identity.Saml.Schema.Metadata
 {
     /// <summary>
     /// The &lt;RoleDescriptor&gt; element is an abstract extension point that contains common descriptive

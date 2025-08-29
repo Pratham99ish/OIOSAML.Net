@@ -1,7 +1,7 @@
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Schema.Protocol;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Schema.Protocol;
 
-namespace dk.nita.saml20.Validation
+namespace Identity.Saml.Validation
 {
     internal interface ISaml20AttributeValidator
     {

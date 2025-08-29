@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Principal;
-using dk.nita.saml20.Session;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Identity;
-using dk.nita.saml20.Utils;
-using dk.nita.saml20.Profiles.BasicPrivilegeProfile;
+using Identity.Saml.Session;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.identity;
+using Identity.Saml.Utils;
+using Identity.Saml.Profiles.BasicPrivilegeProfile;
+using Identity.Saml.PrincipalCache;
 
-namespace dk.nita.saml20.identity
+namespace Identity.Saml.identity
 {
     /// <summary>
     /// <para>

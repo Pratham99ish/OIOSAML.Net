@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.Core
+namespace Identity.Saml.Schema.Core
 {
     /// <summary>
     /// The Saml ConditionAbstract class.

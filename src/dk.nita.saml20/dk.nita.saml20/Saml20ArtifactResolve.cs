@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Xml;
-using dk.nita.saml20;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
+using Identity.Saml.config;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
 using Saml2.Properties;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace dk.nita.saml20
+namespace Identity.Saml
 {
     /// <summary>
     /// Encapsulates the ArtifactResolve schema class.
@@ -32,8 +31,8 @@ namespace dk.nita.saml20
 
         /// <summary>
         /// Gets the underlying schema instance.
+        /// /// <value>The resolve.</value>
         /// </summary>
-        /// <value>The resolve.</value>
         public ArtifactResolve Resolve
         {
             get

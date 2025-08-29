@@ -2,7 +2,7 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.XmlDSig
+namespace Identity.Saml.Schema.XmlDSig
 {
     /// <summary>
     /// The SPKIData element within KeyInfo is used to convey information related to SPKI public key pairs, 

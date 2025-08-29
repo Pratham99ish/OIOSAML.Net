@@ -1,8 +1,8 @@
 using System;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.XmlDSig;
+using Identity.Saml.Schema.XmlDSig;
 
-namespace dk.nita.saml20.Schema.XEnc
+namespace Identity.Saml.Schema.XEnc
 {
     /// <summary>
     /// The Transforms type

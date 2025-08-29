@@ -1,4 +1,4 @@
-﻿namespace dk.nita.saml20.config
+﻿namespace Identity.Saml.config
 {
     /// <summary>
     /// Represents the possible SHA algorithms

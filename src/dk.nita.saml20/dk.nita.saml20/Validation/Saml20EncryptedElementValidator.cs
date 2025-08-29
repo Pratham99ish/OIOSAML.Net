@@ -1,7 +1,7 @@
 using System;
-using dk.nita.saml20.Schema.Protocol;
+using Identity.Saml.Schema.Protocol;
 
-namespace dk.nita.saml20.Validation
+namespace Identity.Saml.Validation
 {
     internal class Saml20EncryptedElementValidator
     {

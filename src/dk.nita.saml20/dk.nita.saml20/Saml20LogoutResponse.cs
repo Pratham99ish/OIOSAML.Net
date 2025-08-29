@@ -1,10 +1,10 @@
 using System;
 using System.Xml;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
 
-namespace dk.nita.saml20
+namespace Identity.Saml
 {
     /// <summary>
     /// Encapsulates the LogoutResponse schema class

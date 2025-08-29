@@ -1,4 +1,4 @@
-namespace dk.nita.saml20.Profiles.DKSaml20
+namespace Identity.Saml.Profiles.DKSaml20
 {
     /// <summary>
     /// Thrown when a token does not comply with the DK-Saml 2.0 specification. This does not necessarily imply that the

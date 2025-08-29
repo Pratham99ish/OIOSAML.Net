@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.Metadata
+namespace Identity.Saml.Schema.Metadata
 {
     /// <summary>
     /// The complex type EndpointType describes a SAML protocol binding endpoint at which a SAML entity can

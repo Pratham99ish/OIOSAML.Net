@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Text;
-using dk.nita.saml20.config;
+using Identity.Saml.config;
 
-namespace dk.nita.saml20.Bindings
+namespace Identity.Saml.Bindings
 {
     /// <summary>
     /// Implements the HTTP SOAP binding

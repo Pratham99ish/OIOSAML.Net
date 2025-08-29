@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace dk.nita.saml20.Session
+namespace Identity.Saml.Session
 {
     /// <summary>
     /// Add support for a safe way of serializing value objects if the <see cref="ISessionStoreProvider"/> needs to persist values

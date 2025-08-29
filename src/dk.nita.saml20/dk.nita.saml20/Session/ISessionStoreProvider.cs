@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace dk.nita.saml20.Session
+namespace Identity.Saml.Session
 {
     /// <summary>
     /// The interface allows plugging in custom session stores to support distributed setup where in memory sessions are not sufficient. 

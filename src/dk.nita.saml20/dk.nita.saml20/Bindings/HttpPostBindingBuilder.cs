@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace dk.nita.saml20.Bindings
+namespace Identity.Saml.Bindings
 {
     /// <summary>
     /// Modern implementation of the HTTP POST binding for API use.

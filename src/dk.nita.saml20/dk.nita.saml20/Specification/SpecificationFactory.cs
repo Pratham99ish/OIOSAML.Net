@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dk.nita.saml20.config;
-using Trace=dk.nita.saml20.Utils.Trace;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.config;
+using Trace=Identity.Saml.Utils.Trace;
+using Identity.Saml.Configuration;
 
-namespace dk.nita.saml20.Specification
+namespace Identity.Saml.Specification
 {
     ///<summary>
     /// 

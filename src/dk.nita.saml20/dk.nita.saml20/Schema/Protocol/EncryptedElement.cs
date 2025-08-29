@@ -1,8 +1,8 @@
 using System;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.XEnc;
+using Identity.Saml.Schema.XEnc;
 
-namespace dk.nita.saml20.Schema.Protocol
+namespace Identity.Saml.Schema.Protocol
 {
     /// <summary>
     /// Represents an encrypted element

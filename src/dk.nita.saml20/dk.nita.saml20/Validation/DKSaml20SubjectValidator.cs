@@ -1,7 +1,7 @@
-using dk.nita.saml20.Profiles.DKSaml20;
-using dk.nita.saml20.Schema.Core;
+using Identity.Saml.Profiles.DKSaml20;
+using Identity.Saml.Schema.Core;
 
-namespace dk.nita.saml20.Validation
+namespace Identity.Saml.Validation
 {
     internal class DKSaml20SubjectValidator : ISaml20SubjectValidator
     {

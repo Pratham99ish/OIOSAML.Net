@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace dk.nita.saml20.Utils
+namespace Identity.Saml.Utils
 {
     /// <summary>
     /// Contains functions to generate and parse artifacts, as defined in "Bindings for the OASIS 

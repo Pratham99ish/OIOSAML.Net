@@ -1,4 +1,4 @@
-namespace dk.nita.saml20.config
+namespace Identity.Saml.config
 {
     /// <summary>
     /// The common location for all configuration-section related constants
@@ -9,7 +9,7 @@ namespace dk.nita.saml20.config
         /// We intend to use the same namespace uri for ALL configuration elements to make
         /// reuse of subelements (eg Certificate) easy.
         /// </summary>
-        public const string NamespaceUri = "urn:dk.nita.saml20.configuration";
+        public const string NamespaceUri = "urn:Identity.Saml.configuration";
 
         /// <summary>
         /// Section names used in configuration files.

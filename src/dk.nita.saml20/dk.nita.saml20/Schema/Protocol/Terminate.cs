@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.Protocol
+namespace Identity.Saml.Schema.Protocol
 {
     /// <summary>
     /// The Saml20 protocol Terminate class

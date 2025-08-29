@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "dk.nita.saml20": {
+    "Identity.Saml": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

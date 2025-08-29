@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Security.Principal;
-using dk.nita.saml20.Profiles.BasicPrivilegeProfile;
-using dk.nita.saml20.Schema.Core;
+using Identity.Saml.Profiles.BasicPrivilegeProfile;
+using Identity.Saml.Schema.Core;
 
-namespace dk.nita.saml20.identity
+namespace Identity.Saml.identity
 {
     /// <summary>
     /// The SAML 2.0 extension to the <c>IIdentity</c> interface.

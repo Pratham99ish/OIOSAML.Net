@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace dk.nita.saml20.Properties {
+namespace Identity.Saml.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace dk.nita.saml20.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("dk.nita.saml20.Properties.Tracing", typeof(Tracing).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Identity.Saml.Properties.Tracing", typeof(Tracing).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

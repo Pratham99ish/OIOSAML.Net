@@ -1,6 +1,6 @@
 using System;
 
-namespace dk.nita.saml20.config
+namespace Identity.Saml.config
 {
     /// <summary>
     /// POCO for legacy IDPEndPointElement, compatible with HttpPostBindingBuilder.

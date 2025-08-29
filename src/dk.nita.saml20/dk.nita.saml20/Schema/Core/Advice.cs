@@ -1,8 +1,8 @@
 using System;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.Protocol;
+using Identity.Saml.Schema.Protocol;
 
-namespace dk.nita.saml20.Schema.Core
+namespace Identity.Saml.Schema.Core
 {
     /// <summary>
     /// The &lt;Advice&gt; element contains any additional information that the SAML authority wishes to provide.

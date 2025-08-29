@@ -1,8 +1,8 @@
 using System;
 using System.Xml;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Utils;
 
-namespace dk.nita.saml20.Validation
+namespace Identity.Saml.Validation
 {
     internal class Saml20XmlAnyAttributeValidator
     {

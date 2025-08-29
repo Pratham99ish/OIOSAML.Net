@@ -4,7 +4,7 @@ using System.Text;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 
-namespace dk.nita.saml20.protocol
+namespace Identity.Saml.Protocol
 {
     /// <summary>
     /// Implements access to the common domain cookie specified in the SAML20 identity provider discovery profile

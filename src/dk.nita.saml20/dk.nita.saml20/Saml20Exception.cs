@@ -1,6 +1,6 @@
 using System;
 
-namespace dk.nita.saml20
+namespace Identity.Saml
 {
     /// <summary>
     /// This exception is thrown to indicate an error in the SAML2 toolkit. It was introduced to make it easy to distinguish between

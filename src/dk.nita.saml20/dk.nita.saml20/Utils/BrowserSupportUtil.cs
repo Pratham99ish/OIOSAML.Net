@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace dk.nita.saml20.Utils
+namespace Identity.Saml.Utils
 {
     internal static class BrowserSupportUtil
     {

@@ -1,8 +1,8 @@
 using System;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.Core;
+using Identity.Saml.Schema.Core;
 
-namespace dk.nita.saml20.Schema.Protocol
+namespace Identity.Saml.Schema.Protocol
 {
     /// <summary>
     /// The &lt;AttributeQuery&gt; element is used to make the query "Return the requested attributes for this

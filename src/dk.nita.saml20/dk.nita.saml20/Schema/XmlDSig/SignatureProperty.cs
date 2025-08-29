@@ -2,7 +2,7 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.XmlDSig
+namespace Identity.Saml.Schema.XmlDSig
 {
     /// <summary>
     /// For the inclusion of assertions about the signature itself (e.g., signature semantics, the time of signing 

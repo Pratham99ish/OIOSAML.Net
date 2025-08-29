@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace dk.nita.saml20.Profiles.BasicPrivilegeProfile
+namespace Identity.Saml.Profiles.BasicPrivilegeProfile
 {
     /// <summary>
     /// Basic Privilege profile privilege

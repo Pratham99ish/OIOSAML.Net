@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 
-namespace dk.nita.saml20.Bindings.SignatureProviders
+namespace Identity.Saml.Bindings.SignatureProviders
 {
     internal class RsaSha512SignatureProvider : SignatureProvider
     {

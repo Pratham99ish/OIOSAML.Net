@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Web;
-using dk.nita.saml20.session;
-using dk.nita.saml20.config;
-using dk.nita.saml20.protocol;
-using dk.nita.saml20.Session;
-using dk.nita.saml20.Utils;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.session;
+using Identity.Saml.config;
+using Identity.Saml.protocol;
+using Identity.Saml.Session;
+using Identity.Saml.Utils;
+using Identity.Saml.Configuration;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 
-namespace dk.nita.saml20.protocol
+namespace Identity.Saml.Protocol
 {
     /// <summary>
     /// Handles the return point for Common Domain Cookie IDP selection.

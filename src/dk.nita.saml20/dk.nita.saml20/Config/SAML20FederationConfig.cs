@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.Configuration;
 
-namespace dk.nita.saml20.config
+namespace Identity.Saml.config
 {
     // This class is now a wrapper for the POCO config options loaded from appsettings.json
     public class SAML20FederationConfig
@@ -14,7 +14,7 @@ namespace dk.nita.saml20.config
             Options = options;
         }
 
-        public dk.nita.saml20.Configuration.ServiceProviderOptions ServiceProvider => Options.ServiceProvider;
+        public Identity.Saml.Configuration.ServiceProviderOptions ServiceProvider => Options.ServiceProvider;
         public List<IDPEndPointOptions> IDPEndPoints => Options.IDPEndPoints;
         public RequestedAttributesOptions RequestedAttributes => Options.RequestedAttributes;
         public CommonDomainOptions CommonDomain => Options.CommonDomain;

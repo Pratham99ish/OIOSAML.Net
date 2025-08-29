@@ -4,18 +4,18 @@ using System.IO;
 using System.Threading;
 using System.Linq;
 using System.Xml;
-using dk.nita.saml20.Bindings;
-using dk.nita.saml20.Session;
-using dk.nita.saml20.Schema.Metadata;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Bindings;
+using Identity.Saml.Session;
+using Identity.Saml.Schema.Metadata;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
 using Microsoft.AspNetCore.Http;
-using dk.nita.saml20.Configuration;
-using dk.nita.saml20.Actions;
-using Trace = dk.nita.saml20.Utils.Trace;
-using dk.nita.saml20.config;
+using Identity.Saml.Configuration;
+using Identity.Saml.Actions;
+using Trace = Identity.Saml.Utils.Trace;
+using Identity.Saml.config;
 
-namespace dk.nita.saml20.protocol
+namespace Identity.Saml.Protocol
 {
     /// <summary>
     /// Handles logout for all SAML bindings.

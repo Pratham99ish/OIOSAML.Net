@@ -1,9 +1,9 @@
 using System;
 using System.Xml;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.XmlDSig;
+using Identity.Saml.Schema.XmlDSig;
 
-namespace dk.nita.saml20.Schema.XEnc
+namespace Identity.Saml.Schema.XEnc
 {
     /// <summary>
     /// The AgreementMethod element appears as the content of a ds:KeyInfo since, like other ds:KeyInfo children, 

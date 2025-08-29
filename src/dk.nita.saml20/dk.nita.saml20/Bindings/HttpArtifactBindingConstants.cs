@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace dk.nita.saml20.Bindings
+namespace Identity.Saml.Bindings
 {
     /// <summary>
     /// Constants pertaining to the artifact binding over HTTP SOAP.

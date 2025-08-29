@@ -1,8 +1,8 @@
 using System;
 using System.Xml.Serialization;
-using my=dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Schema.Core;
-namespace dk.nita.saml20.Schema.Protocol
+using my=Identity.Saml.Schema.Core;
+using Identity.Saml.Schema.Core;
+namespace Identity.Saml.Schema.Protocol
 {
     /// <summary>
     /// The &lt;AuthzDecisionQuery&gt; element is used to make the query "Should these actions on this resource

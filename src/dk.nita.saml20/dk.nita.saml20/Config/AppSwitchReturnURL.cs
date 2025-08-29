@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace dk.nita.saml20.config
+namespace Identity.Saml.config
 {
     /// <summary>
     /// Configuration element for app switch return url.

@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.XmlDSig
+namespace Identity.Saml.Schema.XmlDSig
 {
     /// <summary>
     /// The Manifest element provides a list of References. The difference from the list in SignedInfo is that 

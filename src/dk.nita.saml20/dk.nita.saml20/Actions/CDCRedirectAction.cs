@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using dk.nita.saml20.Identity;
-using dk.nita.saml20.session;
-using dk.nita.saml20.config;
-using dk.nita.saml20.protocol;
-using dk.nita.saml20.Configuration;
+using Identity.Saml;
+using Identity.Saml.PrincipalCache;
+using Identity.Saml.Session;
+using Identity.Saml.Configuration;
+using Identity.Saml.Protocol;
 
-namespace dk.nita.saml20.Actions
+namespace Identity.Saml.Actions
 {
     /// <summary>
     /// This action redirects to a Common Domain Cookie writer endpoint at the IdP.

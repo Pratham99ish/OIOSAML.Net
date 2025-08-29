@@ -1,4 +1,4 @@
-﻿namespace dk.nita.saml20.session
+﻿namespace Identity.Saml.session
 {
     /// <summary>
     /// Class for storing constants regarding session handleing

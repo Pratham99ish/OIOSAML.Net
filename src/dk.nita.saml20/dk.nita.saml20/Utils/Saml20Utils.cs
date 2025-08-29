@@ -1,14 +1,14 @@
-using dk.nita.saml20.identity;
-using dk.nita.saml20.Profiles.BasicPrivilegeProfile;
-using dk.nita.saml20.Profiles.DKSaml20.Attributes;
-using dk.nita.saml20.Schema.BasicPrivilegeProfile;
+using Identity.Saml.identity;
+using Identity.Saml.Profiles.BasicPrivilegeProfile;
+using Identity.Saml.Profiles.DKSaml20.Attributes;
+using Identity.Saml.Schema.BasicPrivilegeProfile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace dk.nita.saml20.Utils
+namespace Identity.Saml.Utils
 {
     /// <summary>
     /// Helpers for converting between string and DateTime representations of UTC date-times

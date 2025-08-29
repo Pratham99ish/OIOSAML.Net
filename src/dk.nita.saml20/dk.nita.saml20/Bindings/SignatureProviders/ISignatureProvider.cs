@@ -2,7 +2,7 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 
-namespace dk.nita.saml20.Bindings.SignatureProviders
+namespace Identity.Saml.Bindings.SignatureProviders
 {
     /// <summary>
     /// can provide signatures based on bytes or XML

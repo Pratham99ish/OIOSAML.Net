@@ -1,6 +1,6 @@
-using dk.nita.saml20.Schema.Core;
+using Identity.Saml.Schema.Core;
 
-namespace dk.nita.saml20.Profiles.DKSaml20.Attributes
+namespace Identity.Saml.Profiles.DKSaml20.Attributes
 {
     /// <summary>
     /// The base class for all DK Saml 2.0 attributes.

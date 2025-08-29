@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using Saml2.Properties;
 
-namespace dk.nita.saml20.config
+namespace Identity.Saml.config
 {
     /// <summary>
     /// Container for a list of strings (from config) that represent wellformed absolute audience uris

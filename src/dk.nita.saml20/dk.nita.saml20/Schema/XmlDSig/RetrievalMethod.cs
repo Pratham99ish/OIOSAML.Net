@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.XmlDSig
+namespace Identity.Saml.Schema.XmlDSig
 {
     /// <summary>
     /// A RetrievalMethod element within KeyInfo is used to convey a reference to KeyInfo information that is 

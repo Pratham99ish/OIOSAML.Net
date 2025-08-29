@@ -8,21 +8,21 @@ using System.Xml;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using dk.nita.saml20.Bindings;
-using dk.nita.saml20.Bindings.SignatureProviders;
-using dk.nita.saml20.Identity;
-using dk.nita.saml20.config;
-using dk.nita.saml20.identity;
-using dk.nita.saml20.Properties;
-using dk.nita.saml20.protocol;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Bindings;
+using Identity.Saml.Bindings.SignatureProviders;
+using Identity.Saml.PrincipalCache;
+using Identity.Saml.config;
+using Identity.Saml.identity;
+using Identity.Saml.Properties;
+using Identity.Saml.protocol;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
 using Saml2.Properties;
-using Trace = dk.nita.saml20.Utils.Trace;
-using dk.nita.saml20.Configuration;
+using Trace = Identity.Saml.Utils.Trace;
+using Identity.Saml.Configuration;
 
-namespace dk.nita.saml20
+namespace Identity.Saml
 {
     /// <summary>
     /// Performs SAML2.0 attribute queries

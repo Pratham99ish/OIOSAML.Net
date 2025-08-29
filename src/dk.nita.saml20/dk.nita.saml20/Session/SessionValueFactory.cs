@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Session
+namespace Identity.Saml.Session
 {
     class SessionValueFactory : ISessionValueFactory
     {

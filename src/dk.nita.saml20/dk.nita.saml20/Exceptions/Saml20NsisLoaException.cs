@@ -1,6 +1,6 @@
 using System;
 
-namespace dk.nita.saml20
+namespace Identity.Saml
 {
     /// <summary>
     /// This exception is thrown to indicate a non sufficient LOA level during the signon request. It was introduced to make it easy to distinguish between

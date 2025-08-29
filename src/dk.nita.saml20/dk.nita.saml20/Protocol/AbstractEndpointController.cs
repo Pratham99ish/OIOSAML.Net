@@ -5,15 +5,15 @@ using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using dk.nita.saml20.session;
-using dk.nita.saml20.config;
+using Identity.Saml.session;
+using Identity.Saml.config;
 using System.Xml;
-using dk.nita.saml20.Logging;
-using dk.nita.saml20.Session;
+using Identity.Saml.Logging;
+using Identity.Saml.Session;
 using Saml2.Properties;
-using Trace = dk.nita.saml20.Utils.Trace;
+using Trace = Identity.Saml.Utils.Trace;
 
-namespace dk.nita.saml20.protocol
+namespace Identity.Saml.protocol
 {
     /// <summary>
     /// A base class for all WebAPI endpoint controllers.

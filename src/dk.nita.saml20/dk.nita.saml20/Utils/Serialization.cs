@@ -2,7 +2,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Utils
+namespace Identity.Saml.Utils
 {
     /// <summary>
     /// Functions for typed serialization and deserialization of objects.

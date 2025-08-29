@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace dk.nita.saml20.Pages
+namespace Identity.Saml.Pages
 {
     /// <summary>
     /// Base page model for shared page logic in ASP.NET Core Razor Pages.

@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 
-namespace dk.nita.saml20.Session
+namespace Identity.Saml.Session
 {
     /// <summary>
     /// Stores sessions in process memory. Expired sessions and user associations are automatically cleaned up

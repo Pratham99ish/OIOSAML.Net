@@ -1,4 +1,4 @@
-namespace dk.nita.saml20.Bindings
+namespace Identity.Saml.Bindings
 {
     /// <summary>
     /// Contains constant string versions of the parameters in the HTTP Redirect Binding. 

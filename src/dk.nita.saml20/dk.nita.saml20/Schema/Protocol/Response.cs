@@ -1,8 +1,8 @@
 using System;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.Core;
+using Identity.Saml.Schema.Core;
 
-namespace dk.nita.saml20.Schema.Protocol
+namespace Identity.Saml.Schema.Protocol
 {
     /// <summary>
     /// The &lt;Response&gt; message element is used when a response consists of a list of zero or more assertions

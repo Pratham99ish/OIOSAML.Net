@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using System.IO;
 
-namespace dk.nita.saml20.Logic
+namespace Identity.Saml.Logic
 {
     public class ConfigHelper
     {

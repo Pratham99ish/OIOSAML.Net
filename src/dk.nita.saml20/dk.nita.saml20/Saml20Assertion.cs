@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.Xml;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
-using dk.nita.saml20.Validation;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.config;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
+using Identity.Saml.Validation;
+using Identity.Saml.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace dk.nita.saml20
+namespace Identity.Saml
 {
     ///<summary>
     /// Encapsulates the functionality required of a DK-SAML 2.0 Assertion. 

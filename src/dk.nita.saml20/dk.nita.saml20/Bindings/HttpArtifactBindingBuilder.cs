@@ -2,17 +2,17 @@
 using System.IO;
 using System.Linq;
 using System.Xml;
-using dk.nita.saml20.Bindings.SignatureProviders;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Properties;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Bindings.SignatureProviders;
+using Identity.Saml.config;
+using Identity.Saml.Properties;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.Configuration;
 
-namespace dk.nita.saml20.Bindings
+namespace Identity.Saml.Bindings
 {
     public class HttpArtifactBindingBuilder : HttpSOAPBindingBuilder
     {

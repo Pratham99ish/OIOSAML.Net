@@ -1,9 +1,9 @@
 ﻿using System;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Utils;
+using Identity.Saml.config;
+using Identity.Saml.Utils;
 using Microsoft.AspNetCore.Http;
 
-namespace dk.nita.saml20.Session
+namespace Identity.Saml.Session
 {
     internal static class SessionStore
     {

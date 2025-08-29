@@ -1,4 +1,4 @@
-﻿namespace dk.nita.saml20.Schema.BasicPrivilegeProfile
+﻿namespace Identity.Saml.Schema.BasicPrivilegeProfile
 {
     internal class Constants
     {

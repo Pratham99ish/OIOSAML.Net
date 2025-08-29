@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.XEnc
+namespace Identity.Saml.Schema.XEnc
 {
     /// <summary>
     /// The EncryptedKey element is used to transport encryption keys from the originator to a known recipient(s). 

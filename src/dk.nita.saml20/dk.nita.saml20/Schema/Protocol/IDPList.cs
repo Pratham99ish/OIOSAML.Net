@@ -2,7 +2,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.Protocol
+namespace Identity.Saml.Schema.Protocol
 {
     /// <summary>
     /// The &lt;IDPList&gt; element specifies the identity providers trusted by the requester to authenticate the

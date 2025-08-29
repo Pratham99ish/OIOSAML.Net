@@ -4,11 +4,11 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
-using SfwEncryptedData = dk.nita.saml20.Schema.XEnc.EncryptedData;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
+using SfwEncryptedData = Identity.Saml.Schema.XEnc.EncryptedData;
 
-namespace dk.nita.saml20
+namespace Identity.Saml
 {
     /// <summary>
     /// Handles the <code>EncryptedAssertion</code> element. 

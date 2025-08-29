@@ -1,8 +1,8 @@
 using System;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.Protocol;
+using Identity.Saml.Schema.Protocol;
 
-namespace dk.nita.saml20.Schema.Core
+namespace Identity.Saml.Schema.Core
 {
     /// <summary>
     /// The optional &lt;Subject&gt; element specifies the principal that is the subject of all of the (zero or more)

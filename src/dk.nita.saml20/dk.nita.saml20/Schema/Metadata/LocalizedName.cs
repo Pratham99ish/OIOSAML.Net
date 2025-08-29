@@ -2,7 +2,7 @@ using System;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.Metadata
+namespace Identity.Saml.Schema.Metadata
 {
     /// <summary>
     /// The localizedNameType complex type extends a string-valued element with a standard XML language

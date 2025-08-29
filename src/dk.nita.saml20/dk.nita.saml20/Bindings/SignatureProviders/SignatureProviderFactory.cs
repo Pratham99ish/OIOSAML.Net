@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography.Xml;
-using dk.nita.saml20.config;
+using Identity.Saml.config;
 
-namespace dk.nita.saml20.Bindings.SignatureProviders
+namespace Identity.Saml.Bindings.SignatureProviders
 {
     /// <summary>
     /// Provides concrete instances of <see cref="ISignatureProvider"/>

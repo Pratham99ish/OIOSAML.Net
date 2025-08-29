@@ -1,9 +1,9 @@
 using System;
 using System.Xml;
 using System.Xml.Serialization;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Utils;
 
-namespace dk.nita.saml20.Schema.XmlDSig
+namespace Identity.Saml.Schema.XmlDSig
 {
     /// <summary>
     /// KeyInfo is an optional element that enables the recipient(s) to obtain the key needed to validate the 

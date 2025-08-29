@@ -1,4 +1,4 @@
-namespace dk.nita.saml20
+namespace Identity.Saml
 {
     /// <summary>
     /// Constants related to SAML 2.0

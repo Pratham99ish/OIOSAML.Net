@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Identity.Saml</AssemblyName>
+    <RootNamespace>Identity.Saml</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Add .NET 8 compatible package references here as needed -->
+  </ItemGroup>
+</Project>

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using dk.nita.saml20.config;
+using Identity.Saml.config;
 
-namespace dk.nita.saml20.Controllers
+namespace Identity.Saml.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

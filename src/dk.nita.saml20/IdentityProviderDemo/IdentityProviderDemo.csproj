@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\dk.nita.saml20\dk.nita.saml20.csproj" />
+    <ProjectReference Include="..\dk.nita.saml20\Identity.Saml.csproj" />
   </ItemGroup>
 
 </Project>

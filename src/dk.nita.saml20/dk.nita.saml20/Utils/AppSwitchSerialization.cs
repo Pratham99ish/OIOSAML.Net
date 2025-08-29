@@ -3,9 +3,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.Protocol;
+using Identity.Saml.Schema.Protocol;
 
-namespace dk.nita.saml20.Utils
+namespace Identity.Saml.Utils
 {
     /// <summary>
     /// Serialization of AppSwitch element.

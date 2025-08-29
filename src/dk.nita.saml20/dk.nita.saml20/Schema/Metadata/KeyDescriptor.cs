@@ -1,9 +1,9 @@
 using System;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.XEnc;
-using dk.nita.saml20.Schema.XmlDSig;
+using Identity.Saml.Schema.XEnc;
+using Identity.Saml.Schema.XmlDSig;
 
-namespace dk.nita.saml20.Schema.Metadata
+namespace Identity.Saml.Schema.Metadata
 {
     /// <summary>
     /// The &lt;KeyDescriptor&gt; element provides information about the cryptographic key(s) that an entity uses

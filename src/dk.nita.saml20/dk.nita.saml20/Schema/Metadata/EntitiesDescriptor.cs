@@ -1,8 +1,8 @@
 using System;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.XmlDSig;
+using Identity.Saml.Schema.XmlDSig;
 
-namespace dk.nita.saml20.Schema.Metadata
+namespace Identity.Saml.Schema.Metadata
 {
     /// <summary>
     /// The &lt;EntitiesDescriptor&gt; element contains the metadata for an optionally named group of SAML

@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace dk.nita.saml20
+namespace Identity.Saml
 {
     /// <summary>
     /// Implementors of this interface will be presented with the Xml form of the Saml 2.0 assertion issued by the IdP

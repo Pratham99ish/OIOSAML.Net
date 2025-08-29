@@ -2,16 +2,16 @@
 using System.Web;
 using System;
 using System.Linq;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Logging;
-using dk.nita.saml20.Properties;
-using dk.nita.saml20.protocol;
-using dk.nita.saml20.Configuration;
-using dk.nita.saml20.Session;
-using dk.nita.saml20.Utils;
+using Identity.Saml.config;
+using Identity.Saml.Logging;
+using Identity.Saml.Properties;
+using Identity.Saml.protocol;
+using Identity.Saml.Configuration;
+using Identity.Saml.Session;
+using Identity.Saml.Utils;
 using Microsoft.AspNetCore.Http;
 
-namespace dk.nita.saml20.protocol
+namespace Identity.Saml.Protocol
 {
     /// <summary>
     /// Common Domain Cookie reader endpoint

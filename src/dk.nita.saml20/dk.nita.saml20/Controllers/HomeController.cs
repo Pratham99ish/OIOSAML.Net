@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace dk.nita.saml20.Controllers
+namespace Identity.Saml.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -9,7 +9,7 @@ namespace dk.nita.saml20.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok("dk.nita.saml20 WebAPI running on .NET 8");
+            return Ok("Identity.Saml WebAPI running on .NET 8");
         }
     }
 }

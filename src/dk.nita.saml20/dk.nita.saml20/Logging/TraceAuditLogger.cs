@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace dk.nita.saml20.Logging
+namespace Identity.Saml.Logging
 {
     /// <summary>
     /// An implementation of the IAuditLogger interface that uses the System.Diagnostics Trace functionality to audit log.
@@ -18,7 +18,7 @@ namespace dk.nita.saml20.Logging
 
         static TraceAuditLogger()
         {
-            _source = new TraceSource("dk.nita.saml20.auditLogger");
+            _source = new TraceSource("Identity.Saml.auditLogger");
         }
 
         public void LogEntry(string msg, string data, string userHostAddress, string idpId, string assertionId, string sessionId, string direction, string operation)

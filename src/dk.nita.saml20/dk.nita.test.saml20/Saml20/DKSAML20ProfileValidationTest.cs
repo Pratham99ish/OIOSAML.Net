@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using dk.nita.saml20.Profiles.DKSaml20;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Schema.XEnc;
+using Identity.Saml.Profiles.DKSaml20;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Schema.XEnc;
 using NUnit.Framework;
-using dk.nita.saml20;
-using dk.nita.saml20.Validation;
-using Assertion=dk.nita.saml20.Schema.Core.Assertion;
+using Identity.Saml;
+using Identity.Saml.Validation;
+using Assertion=Identity.Saml.Schema.Core.Assertion;
 
 namespace dk.nita.test.Saml20
 {

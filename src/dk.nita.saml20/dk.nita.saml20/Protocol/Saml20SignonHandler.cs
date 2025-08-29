@@ -7,24 +7,24 @@ using System.Xml;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Http;
-using dk.nita.saml20.Actions;
-using dk.nita.saml20.AuthnRequestAppender;
-using dk.nita.saml20.Bindings;
-using dk.nita.saml20.Bindings.SignatureProviders;
-using dk.nita.saml20.Session;
-using dk.nita.saml20.session;
-using dk.nita.saml20.Logging;
-using dk.nita.saml20.Properties;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Schema.Metadata;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Actions;
+using Identity.Saml.AuthnRequestAppender;
+using Identity.Saml.Bindings;
+using Identity.Saml.Bindings.SignatureProviders;
+using Identity.Saml.Session;
+using Identity.Saml.session;
+using Identity.Saml.Logging;
+using Identity.Saml.Properties;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Schema.Metadata;
+using Identity.Saml.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using Saml2.Properties;
-using dk.nita.saml20.Configuration;
-using dk.nita.saml20.config;
+using Identity.Saml.Configuration;
+using Identity.Saml.config;
 
-namespace dk.nita.saml20.protocol
+namespace Identity.Saml.Protocol
 {
     public static class SAMLBinding
     {

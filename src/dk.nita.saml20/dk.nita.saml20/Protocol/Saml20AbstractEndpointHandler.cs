@@ -2,16 +2,16 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using dk.nita.saml20.Bindings;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Logging;
-using dk.nita.saml20.Properties;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Bindings;
+using Identity.Saml.config;
+using Identity.Saml.Logging;
+using Identity.Saml.Properties;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
 using Microsoft.Extensions.Logging;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.Configuration;
 
-namespace dk.nita.saml20.protocol
+namespace Identity.Saml.Protocol
 {
     /// <summary>
     /// Base class for all SAML20 specific endpoints.

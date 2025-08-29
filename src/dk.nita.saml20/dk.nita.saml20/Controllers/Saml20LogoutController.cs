@@ -1,18 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Configuration;
-using dk.nita.saml20.Bindings;
-using dk.nita.saml20.Actions;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
+using Identity.Saml.config;
+using Identity.Saml.Configuration;
+using Identity.Saml.Bindings;
+using Identity.Saml.Actions;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
 using System.Xml;
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 
-namespace dk.nita.saml20.Controllers
+namespace Identity.Saml.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

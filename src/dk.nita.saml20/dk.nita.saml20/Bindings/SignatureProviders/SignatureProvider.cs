@@ -3,9 +3,9 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Xml;
-using Trace = dk.nita.saml20.Utils.Trace;
+using Trace = Identity.Saml.Utils.Trace;
 
-namespace dk.nita.saml20.Bindings.SignatureProviders
+namespace Identity.Saml.Bindings.SignatureProviders
 {
     internal abstract class SignatureProvider : ISignatureProvider
     {

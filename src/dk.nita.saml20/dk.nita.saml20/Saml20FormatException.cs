@@ -1,6 +1,6 @@
 using System;
 
-namespace dk.nita.saml20
+namespace Identity.Saml
 {
     /// <summary>
     /// Thrown when a token does not comply with the DK-Saml 2.0 specification. This does not necessarily imply that the

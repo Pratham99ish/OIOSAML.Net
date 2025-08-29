@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Xml.Serialization;
 
-namespace dk.nita.saml20.Schema.XmlDSig
+namespace Identity.Saml.Schema.XmlDSig
 {
     /// <summary>
     /// The SignatureValue element contains the actual value of the digital signature; it is always encoded using 

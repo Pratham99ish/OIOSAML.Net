@@ -1,6 +1,6 @@
 ﻿using System.Web;
 
-namespace dk.nita.saml20.AuthnRequestAppender
+namespace Identity.Saml.AuthnRequestAppender
 {
     /// <summary>
     /// An implementation of the IAuthnRequestAppender interface is instantiated and called if configured in FederationConfig.

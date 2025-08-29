@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Utils;
-using Trace = dk.nita.saml20.Utils.Trace;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Utils;
+using Trace = Identity.Saml.Utils.Trace;
 
-namespace dk.nita.saml20.Validation
+namespace Identity.Saml.Validation
 {
     internal class Saml20AssertionValidator : ISaml20AssertionValidator
     {

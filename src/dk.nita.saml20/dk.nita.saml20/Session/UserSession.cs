@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace dk.nita.saml20.Session
+namespace Identity.Saml.Session
 {
     internal class UserSession
     {

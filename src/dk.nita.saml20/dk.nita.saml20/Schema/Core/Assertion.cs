@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.XmlDSig;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Schema.XmlDSig;
+using Identity.Saml.Utils;
 
-namespace dk.nita.saml20.Schema.Core
+namespace Identity.Saml.Schema.Core
 {
     /// <summary>
     /// The &lt;Assertion&gt; element is of the AssertionType complex type. This type specifies the basic

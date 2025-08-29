@@ -5,11 +5,11 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Web;
-using dk.nita.saml20.Bindings.SignatureProviders;
-using dk.nita.saml20.config;
-using CONSTS = dk.nita.saml20.Bindings.HttpRedirectBindingConstants;
+using Identity.Saml.Bindings.SignatureProviders;
+using Identity.Saml.config;
+using CONSTS = Identity.Saml.Bindings.HttpRedirectBindingConstants;
 
-namespace dk.nita.saml20.Bindings
+namespace Identity.Saml.Bindings
 {
     /// <summary>
     /// Handles the creation of redirect locations when using the HTTP redirect binding, which is outlined in [SAMLBind] 

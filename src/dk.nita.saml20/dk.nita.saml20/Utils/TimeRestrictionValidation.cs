@@ -1,6 +1,6 @@
 using System;
 
-namespace dk.nita.saml20.Utils
+namespace Identity.Saml.Utils
 {
     /// <summary>
     /// Utility functions for validating SAML message time stamps

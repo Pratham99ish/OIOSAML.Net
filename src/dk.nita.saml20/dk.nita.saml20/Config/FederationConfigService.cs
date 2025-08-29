@@ -1,7 +1,7 @@
-using dk.nita.saml20.Configuration;
+using Identity.Saml.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace dk.nita.saml20.config
+namespace Identity.Saml.config
 {
     public class FederationConfigService
     {

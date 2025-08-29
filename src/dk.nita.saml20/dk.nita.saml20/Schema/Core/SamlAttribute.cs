@@ -1,9 +1,9 @@
 using System;
 using System.Xml;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.Metadata;
+using Identity.Saml.Schema.Metadata;
 
-namespace dk.nita.saml20.Schema.Core
+namespace Identity.Saml.Schema.Core
 {
     /// <summary>
     /// The &lt;Attribute&gt; element identifies an attribute by name and optionally includes its value(s). It has the

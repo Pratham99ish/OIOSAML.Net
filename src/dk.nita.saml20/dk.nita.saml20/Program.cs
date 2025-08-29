@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using dk.nita.saml20.Configuration;
-using dk.nita.saml20.config;
+using Identity.Saml.Configuration;
+using Identity.Saml.config;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();

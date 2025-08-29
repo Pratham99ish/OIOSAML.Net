@@ -1,4 +1,4 @@
-﻿namespace dk.nita.saml20.Schema.BasicPrivilegeProfile
+﻿namespace Identity.Saml.Schema.BasicPrivilegeProfile
 {
     /// <summary>
     /// Constraints are essentially key/value pairs where the key identifies the constraint and the value

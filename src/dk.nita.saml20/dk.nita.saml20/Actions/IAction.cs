@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
-using dk.nita.saml20.protocol;
+using Identity.Saml.Protocol;
 
-namespace dk.nita.saml20.Actions
+namespace Identity.Saml
 {
     /// <summary>
     /// An implementation of the IAction interface can be called during login and logoff of the 

@@ -1,9 +1,9 @@
 ﻿using System;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.config;
+using Identity.Saml.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace dk.nita.saml20.AuthnRequestAppender
+namespace Identity.Saml.AuthnRequestAppender
 {
     /// <summary>
     /// IAuthnRequestAppender Factory

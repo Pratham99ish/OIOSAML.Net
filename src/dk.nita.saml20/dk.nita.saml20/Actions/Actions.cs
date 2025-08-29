@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.config;
+using Identity.Saml.Configuration;
 
-namespace dk.nita.saml20.Actions
+namespace Identity.Saml.Actions
 {
     public class Actions
     {

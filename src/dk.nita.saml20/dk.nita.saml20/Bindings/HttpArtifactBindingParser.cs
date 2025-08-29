@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
-using dk.nita.saml20.Schema.Protocol;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Schema.Protocol;
+using Identity.Saml.Utils;
 using System.Xml;
 
-namespace dk.nita.saml20.Bindings
+namespace Identity.Saml.Bindings
 {
     /// <summary>
     /// Parses the response messages related to the artifact binding.

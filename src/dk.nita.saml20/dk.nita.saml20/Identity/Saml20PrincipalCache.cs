@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Principal;
-using dk.nita.saml20.Session;
-using dk.nita.saml20.session;
-using dk.nita.saml20.identity;
+using Identity.Saml.Session;
+using Identity.Saml.identity;
+using Identity.Saml.session;
 
-namespace dk.nita.saml20.Identity
+namespace Identity.Saml.PrincipalCache
 {
     /// <summary>
     /// 

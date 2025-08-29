@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
-using dk.nita.saml20.Properties;
-using Trace=dk.nita.saml20.Utils.Trace;
+using Identity.Saml.Properties;
+using Trace=Identity.Saml.Utils.Trace;
 
-namespace dk.nita.saml20.Specification
+namespace Identity.Saml.Specification
 {
     /// <summary>
     /// Checks if a certificate is within its validity period

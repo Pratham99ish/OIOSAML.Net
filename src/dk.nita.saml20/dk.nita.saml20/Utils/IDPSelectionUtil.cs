@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
-using dk.nita.saml20.config;
-using dk.nita.saml20.protocol;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.Configuration;
+using Identity.Saml.Protocol;
 using System.Linq;
 
-namespace dk.nita.saml20.Utils
+namespace Identity.Saml.Utils
 {
     /// <summary>
     /// This delegate is used handling events, where the framework have several configured IDP's to choose from

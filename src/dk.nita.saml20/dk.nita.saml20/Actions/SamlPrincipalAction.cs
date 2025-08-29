@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Security.Principal;
 using System.Security.Claims;
-using dk.nita.saml20.session;
-using dk.nita.saml20.identity;
-using dk.nita.saml20.protocol;
-using dk.nita.saml20.Identity;
+using Identity.Saml.Session;
+using Identity.Saml.PrincipalCache;
+using Identity.Saml.Protocol;
 
-namespace dk.nita.saml20.Actions
+namespace Identity.Saml.Actions
 {
     /// <summary>
     /// Sets the SamlPrincipal on the current http context

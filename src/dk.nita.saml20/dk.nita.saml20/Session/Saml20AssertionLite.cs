@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using dk.nita.saml20.Schema.Core;
+using Identity.Saml.Schema.Core;
 
-namespace dk.nita.saml20.Session
+namespace Identity.Saml.Session
 {
     /// <summary>
     /// A lite version of <see cref="Saml20Assertion"/> that is serializable. This is necessary in order to be able to support a distributed cache implementation of <see cref="ISessionStoreProvider"/>

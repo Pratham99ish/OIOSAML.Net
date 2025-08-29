@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using dk.nita.saml20.config;
-using dk.nita.saml20.Configuration;
+using Identity.Saml.config;
+using Identity.Saml.Configuration;
 
-namespace dk.nita.saml20.Controllers
+namespace Identity.Saml.Controllers
 {
     /// <summary>
     /// Base class for ASP.NET Core Web API controllers in the SAML20 project.

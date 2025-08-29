@@ -1,9 +1,9 @@
 using System;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.Core;
-using dk.nita.saml20.Utils;
+using Identity.Saml.Schema.Core;
+using Identity.Saml.Utils;
 
-namespace dk.nita.saml20.Schema.Protocol
+namespace Identity.Saml.Schema.Protocol
 {
     /// <summary>
     /// A session participant or session authority sends a &lt;LogoutRequest&gt; message to indicate that a session
