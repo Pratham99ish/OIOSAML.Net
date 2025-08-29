@@ -1,92 +1,85 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Web;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 using dk.nita.saml20.config;
 using Saml2.Properties;
 using System.Security.Cryptography.Xml;
 using System.Collections.Generic;
+using dk.nita.saml20.Configuration;
+using dk.nita.saml20.Schema.XmlDSig;
 
 namespace dk.nita.saml20.protocol
 {
     /// <summary>
     /// The handler that exposes a metadata endpoint to the other parties of the federation.
-    ///     
-    /// The handler accepts the following GET parameters :
-    /// - encoding : Delivers the Metadata document in the specified encoding. Example: encoding=iso-8859-1 . If the parameter is omitted, the encoding utf-8 is used.
-    /// - sign : A boolean parameter specifying whether to sign the metadata document. Example: sign=false. If the parameter is omitted, the document is signed.
     /// </summary>
-    public class Saml20MetadataHandler : AbstractEndpointHandler
+    public class Saml20MetadataHandler
     {
-        #region IHttpHandler Members
-
         /// <summary>
-        /// Enables processing of HTTP Web requests by a custom HttpHandler that implements the <see cref="T:System.Web.IHttpHandler"/> interface.
+        /// Processes the HTTP request for the metadata endpoint.
         /// </summary>
-        /// <param name="context">An <see cref="T:System.Web.HttpContext"/> object that provides references to the intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests.</param>
-        public override void ProcessRequest(HttpContext context)
+        /// <param name="context">The HTTP context.</param>
+        /// <param name="config">The SAML federation config options.</param>
+        /// <param name="signingCertificates">The signing certificates.</param>
+        public void ProcessRequest(HttpContext context, SAML20FederationConfigOptions config, List<X509Certificate2> signingCertificates)
         {
-            var encoding = context.Request.QueryString["encoding"];
+            var encoding = context.Request.Query["encoding"].FirstOrDefault();
             try
             {
                 if (!string.IsNullOrEmpty(encoding))
-                    context.Response.ContentEncoding = Encoding.GetEncoding(encoding);
+                    context.Response.ContentType = "application/xml; charset=" + encoding;
             }
             catch (ArgumentException)
             {
-                HandleError(context, Resources.UnknownEncoding, encoding);
+                context.Response.StatusCode = 400;
+                context.Response.ContentType = "application/json";
+                context.Response.WriteAsync($"{{\"error\":\"Unknown encoding: {encoding}\"}}");
                 return;
             }
 
-            var sign = false;
+            var sign = true;
             try
             {
-                string param = context.Request.QueryString["sign"];                
+                string param = context.Request.Query["sign"].FirstOrDefault();
                 if (!string.IsNullOrEmpty(param))
                     sign = Convert.ToBoolean(param);
-            } catch(FormatException)
+            }
+            catch (FormatException)
             {
-                HandleError(context, Resources.GenericError);
+                context.Response.StatusCode = 400;
+                context.Response.ContentType = "application/json";
+                context.Response.WriteAsync($"{{\"error\":\"Invalid sign parameter\"}}");
                 return;
             }
-                        
-            context.Response.ContentType = Saml20Constants.METADATA_MIMETYPE;
-            context.Response.AddHeader("Content-Disposition", "attachment; filename=\"metadata.xml\"");
 
-            CreateMetadataDocument(context, sign);
-            
-            context.Response.End();            
+            context.Response.ContentType = "application/samlmetadata+xml";
+            context.Response.Headers["Content-Disposition"] = "attachment; filename=metadata.xml";
+
+            CreateMetadataDocument(context, config, signingCertificates, sign, encoding);
         }
 
-        /// <summary>
-        /// Gets a value indicating whether this instance is reusable.
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance is reusable; otherwise, <c>false</c>.
-        /// </value>
-        public new bool IsReusable
+        private void CreateMetadataDocument(HttpContext context, SAML20FederationConfigOptions config, List<X509Certificate2> signingCertificates, bool sign, string encoding)
         {
-            get { return false; }
-        }
-
-        #endregion
-
-        private void CreateMetadataDocument(HttpContext context, bool sign)
-        {
-            SAML20FederationConfig configuration = SAML20FederationConfig.GetConfig();
-
-            var keyinfos = new List<KeyInfo>();
-            foreach(Certificate certificate in FederationConfig.GetConfig().SigningCertificates)
+            var keyinfos = new List<dk.nita.saml20.Schema.XmlDSig.KeyInfo>();
+            foreach (var certificate in signingCertificates)
             {
-                KeyInfo keyinfo = new KeyInfo();
-                KeyInfoX509Data keyClause = new KeyInfoX509Data(certificate.GetCertificate(), X509IncludeOption.EndCertOnly);
-                keyinfo.AddClause(keyClause);
+                var x509Data = new X509Data
+                {
+                    Items = new object[] { certificate.RawData },
+                    ItemsElementName = new[] { ItemsChoiceType.X509Certificate }
+                };
+                var keyinfo = new dk.nita.saml20.Schema.XmlDSig.KeyInfo
+                {
+                    Items = new object[] { x509Data }
+                };
                 keyinfos.Add(keyinfo);
             }
-
-            Saml20MetadataDocument doc = new Saml20MetadataDocument(configuration, keyinfos, sign);
-
-            context.Response.Write(doc.ToXml( context.Response.ContentEncoding ));
+            var federationConfig = new SAML20FederationConfig(config);
+            var doc = new Saml20MetadataDocument(federationConfig, keyinfos, sign);
+            var enc = string.IsNullOrEmpty(encoding) ? Encoding.UTF8 : Encoding.GetEncoding(encoding);
+            context.Response.WriteAsync(doc.ToXml(enc));
         }
     }
 }

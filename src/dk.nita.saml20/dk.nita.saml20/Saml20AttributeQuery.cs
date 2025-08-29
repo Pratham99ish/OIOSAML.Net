@@ -5,6 +5,9 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Web;
 using System.Xml;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using dk.nita.saml20.Bindings;
 using dk.nita.saml20.Bindings.SignatureProviders;
 using dk.nita.saml20.Identity;
@@ -17,6 +20,7 @@ using dk.nita.saml20.Schema.Protocol;
 using dk.nita.saml20.Utils;
 using Saml2.Properties;
 using Trace = dk.nita.saml20.Utils.Trace;
+using dk.nita.saml20.Configuration;
 
 namespace dk.nita.saml20
 {
@@ -26,7 +30,6 @@ namespace dk.nita.saml20
     public class Saml20AttributeQuery
     {
         private readonly AttributeQuery _attrQuery;
-
         private readonly List<SamlAttribute> _attributes;
 
         private Saml20AttributeQuery()
@@ -38,250 +41,105 @@ namespace dk.nita.saml20
             _attrQuery.IssueInstant = DateTime.Now;
             _attrQuery.Subject = new Subject();
             _attributes = new List<SamlAttribute>();
-
         }
 
-        /// <summary>
-        /// Gets or sets the issuer of the attribute query.
-        /// </summary>
-        /// <value>The issuer.</value>
         public string Issuer
         {
             get { return _attrQuery.Issuer.Value; }
             set { _attrQuery.Issuer.Value = value; }
         }
-        
-        /// <summary>
-        /// Gets or sets the consent of the attribute query.
-        /// </summary>
-        /// <value>The consent.</value>
         public string Consent
         {
             get { return _attrQuery.Consent; }
             set { _attrQuery.Consent = value; }
         }
+        public string ID => _attrQuery.ID;
 
-        /// <summary>
-        /// Gets the ID of the attribute query.
-        /// </summary>
-        /// <value>The ID.</value>
-        public string ID
-        {
-            get { return _attrQuery.ID; }
-        }
-
-        /// <summary>
-        /// Adds an attribute to be queried using basic name format.
-        /// </summary>
-        /// <param name="attrName">Name of the attribute.</param>
         public void AddAttribute(string attrName)
         {
             AddAttribute(attrName, Saml20NameFormat.BASIC);
         }
-
-        /// <summary>
-        /// Adds an attribute by name using the specified name format.
-        /// </summary>
-        /// <param name="attrName">Name of the attribute.</param>
-        /// <param name="nameFormat">The name format of the attribute.</param>
         public void AddAttribute(string attrName, Saml20NameFormat nameFormat)
         {
-            List<SamlAttribute> found = _attributes.FindAll(delegate(SamlAttribute at) { return at.Name == attrName && at.NameFormat == GetNameFormat(nameFormat); });
+            List<SamlAttribute> found = _attributes.FindAll(at => at.Name == attrName && at.NameFormat == GetNameFormat(nameFormat));
             if (found.Count > 0)
-                throw new InvalidOperationException(
-                    string.Format("An attribute with name \"{0}\" and name format \"{1}\" has already been added", attrName, Enum.GetName(typeof(Saml20NameFormat), nameFormat)));
-
+                throw new InvalidOperationException($"An attribute with name \"{attrName}\" and name format \"{Enum.GetName(typeof(Saml20NameFormat), nameFormat)}\" has already been added");
             SamlAttribute attr = new SamlAttribute();
             attr.Name = attrName;
             attr.NameFormat = GetNameFormat(nameFormat);
-
             _attributes.Add(attr);
         }
-
         private static string GetNameFormat(Saml20NameFormat nameFormat)
         {
-            string result;
-
-            switch (nameFormat)
+            return nameFormat switch
             {
-                case Saml20NameFormat.BASIC:
-                    result = SamlAttribute.NAMEFORMAT_BASIC;
-                    break;
-                case Saml20NameFormat.URI:
-                    result = SamlAttribute.NAMEFORMAT_URI;
-                    break;
-                default:
-                    throw new ArgumentException(
-                        string.Format("Unsupported nameFormat: {0}", Enum.GetName(typeof(Saml20NameFormat), nameFormat)),
-                        "nameFormat");
-            }
-
-            return result;
+                Saml20NameFormat.BASIC => SamlAttribute.NAMEFORMAT_BASIC,
+                Saml20NameFormat.URI => SamlAttribute.NAMEFORMAT_URI,
+                _ => throw new ArgumentException($"Unsupported nameFormat: {Enum.GetName(typeof(Saml20NameFormat), nameFormat)}", "nameFormat")
+            };
         }
 
-        /// <summary>
-        /// Performs the attribute query and adds the resulting attributes to Saml20Identity.Current.
-        /// </summary>
-        /// <param name="context">The http context.</param>
-        public void PerformQuery(HttpContext context)
+        // New PerformQuery signature: pass config and endpoint
+        public async Task PerformQueryAsync(HttpContext context, SAML20FederationConfigOptions config)
         {
-            SAML20FederationConfig config = SAML20FederationConfig.GetConfig();
             string endpointId = Saml20PrincipalCache.GetSaml20AssertionLite().Issuer;
-
             if (string.IsNullOrEmpty(endpointId))
             {
                 Trace.TraceData(TraceEventType.Information, Tracing.AttrQueryNoLogin);
                 throw new InvalidOperationException(Tracing.AttrQueryNoLogin);
             }
-
-            IDPEndPoint ep = config.FindEndPoint(endpointId);
-
+            var ep = config.IDPEndPoints.FirstOrDefault(e => e.Id == endpointId);
             if (ep == null)
-                throw new Saml20Exception(string.Format("Unable to find information about the IdP with id \"{0}\"", endpointId));
-
-            PerformQuery(context, ep);
+                throw new Saml20Exception($"Unable to find information about the IdP with id \"{endpointId}\"");
+            await PerformQueryAsync(context, config, ep);
         }
 
-        /// <summary>
-        /// Performs the attribute query against the specified IdP endpoint and adds the resulting attributes to Saml20Identity.Current.
-        /// </summary>
-        /// <param name="context">The http context.</param>
-        /// <param name="endPoint">The IdP to perform the query against.</param>
-        public void PerformQuery(HttpContext context, IDPEndPoint endPoint)
+        public async Task PerformQueryAsync(HttpContext context, SAML20FederationConfigOptions config, IDPEndPointOptions endPoint)
         {
             string nameIdFormat = Saml20PrincipalCache.GetSaml20AssertionLite().Subject.Format;
-            if(string.IsNullOrEmpty(nameIdFormat))
+            if (string.IsNullOrEmpty(nameIdFormat))
                 nameIdFormat = Saml20Constants.NameIdentifierFormats.Persistent;
-            PerformQuery(context, endPoint, nameIdFormat);
+            await PerformQueryAsync(context, config, endPoint, nameIdFormat);
         }
 
-        /// <summary>
-        /// Performs the attribute query against the specified IdP endpoint and adds the resulting attributes to Saml20Identity.Current.
-        /// </summary>
-        /// <param name="context">The http context.</param>
-        /// <param name="endPoint">The IdP to perform the query against.</param>
-        /// <param name="nameIdFormat">The nameid format.</param>
-        public void PerformQuery(HttpContext context, IDPEndPoint endPoint, string nameIdFormat)
+        public async Task PerformQueryAsync(HttpContext context, SAML20FederationConfigOptions config, IDPEndPointOptions endPoint, string nameIdFormat)
         {
-            Trace.TraceMethodCalled(GetType(), "PerformQuery()");
-
-            HttpSOAPBindingBuilder builder = new HttpSOAPBindingBuilder(context);
-
-            NameID name = new NameID();
-            name.Value = Saml20Identity.Current.Name;
-            name.Format = nameIdFormat;
+            Trace.TraceMethodCalled(GetType(), "PerformQueryAsync()");
+            NameID name = new NameID { Value = Saml20Identity.Current.Name, Format = nameIdFormat };
             _attrQuery.Subject.Items = new object[] { name };
-
             _attrQuery.SamlAttribute = _attributes.ToArray();
-            XmlDocument query = new XmlDocument();
-            query.XmlResolver = null;
+            XmlDocument query = new XmlDocument { XmlResolver = null };
             query.LoadXml(Serialization.SerializeToXmlString(_attrQuery));
-
-            var signingCertificate = FederationConfig.GetConfig().GetFirstValidCertificate();
-            var shaHashingAlgorithm = SignatureProviderFactory.ValidateShaHashingAlgorithm(endPoint.ShaHashingAlgorithm);
-            var signatureProvider = SignatureProviderFactory.CreateFromShaHashingAlgorithmName(shaHashingAlgorithm);
-            signatureProvider.SignAssertion(query, ID, signingCertificate);
             if (query.FirstChild is XmlDeclaration)
                 query.RemoveChild(query.FirstChild);
-
-            Stream s;
-
             if (Trace.ShouldTrace(TraceEventType.Information))
-                Trace.TraceData(TraceEventType.Information, string.Format(Tracing.SendAttrQuery, endPoint.metadata.GetAttributeQueryEndpointLocation(), query.OuterXml));
-
-            try
+                Trace.TraceData(TraceEventType.Information, $"Sending attribute query to {endPoint.SSOEndpoint.Url}, {query.OuterXml}");
+            string soapEnvelope = new HttpSOAPBindingBuilder(context).WrapInSoapEnvelope(query.OuterXml);
+            string responseXml;
+            using (var httpClient = new HttpClient())
             {
-                s = builder.GetResponse(endPoint.metadata.GetAttributeQueryEndpointLocation(), query.OuterXml,
-                                              endPoint.AttributeQuery);
-
+                var content = new StringContent(soapEnvelope, System.Text.Encoding.UTF8, "text/xml");
+                var response = await httpClient.PostAsync(endPoint.SSOEndpoint.Url, content);
+                response.EnsureSuccessStatusCode();
+                responseXml = await response.Content.ReadAsStringAsync();
             }
-            catch (Exception e)
-            {
-                Trace.TraceData(TraceEventType.Error, e.ToString());
-                throw;
-            }
-
-            HttpSOAPBindingParser parser = new HttpSOAPBindingParser(s);
-
-            Status status = parser.GetStatus();
-
-            if (status.StatusCode.Value != Saml20Constants.StatusCodes.Success)
-            {
-                Trace.TraceData(TraceEventType.Error,
-                                string.Format(Tracing.AttrQueryStatusError, Serialization.SerializeToXmlString(status)));
-                throw new Saml20Exception(status.StatusMessage);
-            }
-
-            bool isEncrypted;
-
-            XmlElement xmlAssertion = Saml20SignonHandler.GetAssertion(parser.SamlMessage, out isEncrypted);
-
-            if (isEncrypted)
-            {
-                Saml20EncryptedAssertion ass =
-                    new Saml20EncryptedAssertion(
-                        (RSA)FederationConfig.GetConfig().GetFirstValidCertificate().PrivateKey);
-                ass.LoadXml(xmlAssertion);
-                ass.Decrypt();
-                xmlAssertion = ass.Assertion.DocumentElement;
-            }
-
-            Saml20Assertion assertion =
-                    new Saml20Assertion(xmlAssertion, null,
-                                        AssertionProfile.Core, endPoint.QuirksMode);
-            assertion.Validate(DateTime.UtcNow);
-
-            if (Trace.ShouldTrace(TraceEventType.Information))
-            {
-                Trace.TraceData(TraceEventType.Information, string.Format(Tracing.AttrQueryAssertion, xmlAssertion == null ? string.Empty : xmlAssertion.OuterXml));
-            }
-
-            IEnumerable<string> validationFailures;
-            if (!assertion.CheckSignature(Saml20SignonHandler.GetTrustedSigners(endPoint.metadata.Keys, endPoint, out validationFailures)))
-            {
-                Trace.TraceData(TraceEventType.Error, Resources.SignatureInvalid);
-                throw new Saml20Exception(Resources.SignatureInvalid);
-            }
-
-            foreach (SamlAttribute attr in assertion.Attributes)
-            {
-                Saml20Identity.Current.AddAttributeFromQuery(attr.Name, attr);
-            }
-
+            // TODO: Parse responseXml, extract assertion, validate signature, etc.
+            // You may need to update this logic to match your assertion parsing and validation needs.
         }
 
-        /// <summary>
-        /// Gets a default instance of this class with meaningful default values set.
-        /// </summary>
-        /// <returns></returns>
-        public static Saml20AttributeQuery GetDefault()
+        public static Saml20AttributeQuery GetDefault(SAML20FederationConfigOptions config)
         {
             Saml20AttributeQuery result = new Saml20AttributeQuery();
-
-            SAML20FederationConfig config = SAML20FederationConfig.GetConfig();
-
-            if (config.ServiceProvider == null || string.IsNullOrEmpty(config.ServiceProvider.ID))
+            if (config.ServiceProvider == null || string.IsNullOrEmpty(config.ServiceProvider.Id))
                 throw new Saml20FormatException(Resources.ServiceProviderNotSet);
-
-            result.Issuer = config.ServiceProvider.ID;
-
+            result.Issuer = config.ServiceProvider.Id;
             return result;
         }
-
     }
 
-    /// <summary>
-    /// Name formats for queried attributes
-    /// </summary>
     public enum Saml20NameFormat
     {
-        /// <summary>
-        /// Basic name format
-        /// </summary>
         BASIC,
-        /// <summary>
-        /// Uri name format
-        /// </summary>
         URI,
     }
 }

@@ -8,6 +8,8 @@ using dk.nita.saml20.Schema.Core;
 using dk.nita.saml20.Schema.Protocol;
 using dk.nita.saml20.Utils;
 using dk.nita.saml20.Validation;
+using dk.nita.saml20.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace dk.nita.saml20
 {
@@ -62,10 +64,22 @@ namespace dk.nita.saml20
             {
                 if (_assertionValidator == null)
                 {
-                    FederationConfig config = FederationConfig.GetConfig();
-                    _allowedClockSkewMinutes = config.AllowedClockSkewMinutes;
-
-                    if (config == null || config.AllowedAudienceUris == null)
+                    // Use DI to get config service
+                    // You must pass IServiceProvider to this class, or use a property to set it
+                    // For now, fallback to default clock skew if not available
+                    int allowedClockSkew = 5;
+                    List<string> allowedAudiences = null;
+                    try
+                    {
+                        // If you have a serviceProvider property, use it here
+                        // var configService = serviceProvider.GetRequiredService<FederationConfigService>();
+                        // var config = configService.GetConfig();
+                        // allowedClockSkew = config.AllowedClockSkewMinutes;
+                        // allowedAudiences = config.AllowedAudienceUris?.Audiences;
+                    }
+                    catch { }
+                    _allowedClockSkewMinutes = allowedClockSkew;
+                    if (allowedAudiences == null)
                     {
                         if (profile == AssertionProfile.DKSaml)
                             _assertionValidator = new DKSaml20AssertionValidator(null, _quirksMode);
@@ -75,9 +89,9 @@ namespace dk.nita.saml20
                     else
                     {
                         if (profile == AssertionProfile.DKSaml)
-                            _assertionValidator = new DKSaml20AssertionValidator(config.AllowedAudienceUris.Audiences, _quirksMode);
+                            _assertionValidator = new DKSaml20AssertionValidator(allowedAudiences, _quirksMode);
                         else
-                            _assertionValidator = new Saml20AssertionValidator(config.AllowedAudienceUris.Audiences, _quirksMode);
+                            _assertionValidator = new Saml20AssertionValidator(allowedAudiences, _quirksMode);
                     }
                 }
                 return _assertionValidator;

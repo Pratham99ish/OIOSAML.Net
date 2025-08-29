@@ -4,6 +4,8 @@ using System.Text;
 using System.Web;
 using dk.nita.saml20.config;
 using dk.nita.saml20.protocol;
+using dk.nita.saml20.Configuration;
+using System.Linq;
 
 namespace dk.nita.saml20.Utils
 {
@@ -12,8 +14,8 @@ namespace dk.nita.saml20.Utils
     /// and needs information on, which one to use.
     /// </summary>
     /// <param name="ep">List of configured endpoints</param>
-    /// <returns>The IDPEndPoint for the IDP that should be used for authentication</returns>
-    public delegate IDPEndPoint IDPSelectionEventHandler(IDPEndpoints ep);
+    /// <returns>The IDPEndPointOptions for the IDP that should be used for authentication</returns>
+    public delegate IDPEndPointOptions IDPSelectionEventHandler(List<IDPEndPointOptions> ep);
 
     /// <summary>
     /// Contains helper functionality for selection of IDP when more than one is configured
@@ -28,13 +30,12 @@ namespace dk.nita.saml20.Utils
         /// </summary>
         public static event IDPSelectionEventHandler IDPSelectionEvent;
 
-        internal static IDPEndPoint InvokeIDPSelectionEventHandler(IDPEndpoints endpoints)
+        internal static IDPEndPointOptions InvokeIDPSelectionEventHandler(List<IDPEndPointOptions> endpoints)
         {
             if (IDPSelectionEvent != null)
             {
                 return IDPSelectionEvent(endpoints);
             }
-
             return null;
         }
 
@@ -49,15 +50,16 @@ namespace dk.nita.saml20.Utils
         /// <param name="desiredProfile">Specifies the desired type of profile (Person or Professional)</param>
         /// <param name="appSwitchPlatform">AppSwitch platform - either iOS or Android</param>
         /// <returns>A URL that can be used for logging in at the IDP</returns>
-        public static string GetIDPLoginUrl(string idpId, bool forceAuthn, bool isPassive, string desiredNsisLoa, string desiredProfile, string appSwitchPlatform = null)
+        public static string GetIDPLoginUrl(SAML20FederationConfigOptions config, string idpId, bool forceAuthn, bool isPassive, string desiredNsisLoa, string desiredProfile, string appSwitchPlatform = null)
         {
-            var defaultUrl =  string.Format("{0}?{1}={2}&{3}={4}&{5}={6}&{7}={8}&{9}={10}", SAML20FederationConfig.GetConfig().ServiceProvider.SignOnEndpoint.localPath,
+            var signOnEndpoint = config?.ServiceProvider?.ServiceEndpoints?.FirstOrDefault(e => e.Type?.ToUpperInvariant() == "SIGNON")?.LocalPath ?? "";
+            var defaultUrl = string.Format("{0}?{1}={2}&{3}={4}&{5}={6}&{7}={8}&{9}={10}",
+                signOnEndpoint,
                 Saml20SignonHandler.IDPChoiceParameterName, HttpUtility.UrlEncode(idpId),
                 Saml20SignonHandler.IDPForceAuthn, forceAuthn.ToString(),
                 Saml20SignonHandler.IDPIsPassive, isPassive.ToString(),
                 Saml20SignonHandler.NsisLoa, desiredNsisLoa,
                 Saml20SignonHandler.Profile, desiredProfile);
-                
             return string.IsNullOrWhiteSpace(appSwitchPlatform) ? defaultUrl : string.Format("{0}&appSwitchPlatform={1}", defaultUrl, appSwitchPlatform);
         }
     }

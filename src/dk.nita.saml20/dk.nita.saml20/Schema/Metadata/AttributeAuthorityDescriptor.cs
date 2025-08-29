@@ -1,5 +1,6 @@
 using System;
 using System.Xml.Serialization;
+using dk.nita.saml20.Schema.Core;
 
 namespace dk.nita.saml20.Schema.Metadata
 {
@@ -26,7 +27,7 @@ namespace dk.nita.saml20.Schema.Metadata
         
         private string[] attributeProfileField;
         
-        private dk.nita.saml20.config.Attribute[] attributeField;
+        private SamlAttribute[] attributeField;
 
 
         /// <summary>
@@ -107,7 +108,7 @@ namespace dk.nita.saml20.Schema.Metadata
         /// </summary>
         /// <value>The attribute.</value>
         [XmlElementAttribute("Attribute", Namespace=Saml20Constants.METADATA)]
-        public dk.nita.saml20.config.Attribute[] Attribute {
+        public SamlAttribute[] Attribute {
             get {
                 return attributeField;
             }

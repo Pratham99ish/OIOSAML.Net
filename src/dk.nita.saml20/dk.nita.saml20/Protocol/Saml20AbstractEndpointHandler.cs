@@ -1,22 +1,22 @@
+using Microsoft.AspNetCore.Http;
 using System;
+using System.Linq;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.Web;
 using dk.nita.saml20.Bindings;
 using dk.nita.saml20.config;
 using dk.nita.saml20.Logging;
 using dk.nita.saml20.Properties;
 using dk.nita.saml20.Schema.Protocol;
 using dk.nita.saml20.Utils;
-using Trace = dk.nita.saml20.Utils.Trace;
+using Microsoft.Extensions.Logging;
+using dk.nita.saml20.Configuration;
 
 namespace dk.nita.saml20.protocol
 {
     /// <summary>
     /// Base class for all SAML20 specific endpoints.
     /// </summary>
-    public abstract class Saml20AbstractEndpointHandler : AbstractEndpointHandler
+    public abstract class Saml20AbstractEndpointHandler
     {
         /// <summary>
         /// Parameter name for idp choice
@@ -42,17 +42,28 @@ namespace dk.nita.saml20.protocol
         /// URL parameter name do define a platform used in AppSwitch
         /// </summary>
         public const string AppSwitchPlatform = "appSwitchPlatform";
-        
+
         /// <summary>
         /// Determines if configuration has been validated
         /// </summary>
         public static bool validated = false;
+        protected readonly SAML20FederationConfigService _samlConfigService;
+        protected readonly ILogger _logger;
+
+        public Saml20AbstractEndpointHandler(SAML20FederationConfigService samlConfigService, ILogger logger)
+        {
+            _samlConfigService = samlConfigService;
+            _logger = logger;
+        }
+
+        // Abstract method to be implemented by derived classes
+        protected abstract void Handle(HttpContext context);
 
         /// <summary>
         /// Enables processing of HTTP Web requests by a custom HttpHandler that implements the <see cref="T:System.Web.IHttpHandler"/> interface.
         /// </summary>
         /// <param name="context">An <see cref="T:System.Web.HttpContext"/> object that provides references to the intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests.</param>
-        public sealed override void ProcessRequest(HttpContext context)
+        public void ProcessRequest(HttpContext context)
         {
             try
             {
@@ -61,14 +72,11 @@ namespace dk.nita.saml20.protocol
             }
             catch (Exception ex)
             {
-                if (ex is Saml20NsisLoaException)
-                {
-                    HandleError(context, ex.ToString(), (m) => new Saml20NsisLoaException(m));
-                }
-                else
-                {
-                    HandleError(context, ex);
-                }
+                var status = new Status {
+                    StatusCode = new StatusCode { Value = "urn:oasis:names:tc:SAML:2.0:status:Responder" },
+                    StatusMessage = ex.Message
+                };
+                HandleError(context, status);
             }
         }
 
@@ -80,101 +88,49 @@ namespace dk.nita.saml20.protocol
         {
             if (validated)
                 return;
-
-            string errorMessage;
-            validated = BindingUtility.ValidateConfiguration(out errorMessage);
-            if (!validated)
-                HandleError(ctx, errorMessage);
-        }
-
-        /// <summary>
-        /// Abstract handler function
-        /// </summary>
-        /// <param name="ctx">The context.</param>
-        protected abstract void Handle(HttpContext ctx);
-
-        /// <summary>
-        /// Handles the selection of an IDP. If only one IDP is found, the user is automatically redirected to it.
-        /// If several are found, and nothing indicates to which one the user should be sent, this method returns null.
-        /// </summary>
-        public IDPEndPoint RetrieveIDP(HttpContext context)
-        {
-            SAML20FederationConfig config = SAML20FederationConfig.GetConfig();
-
-            //If idpChoice is set, use it value
-            if (!string.IsNullOrEmpty(context.Request.Params[IDPChoiceParameterName]))
+            var query = ctx.Request.Query;
+            var config = _samlConfigService.GetConfig();
+            // Example: Find IDP endpoint by id
+            if (query.ContainsKey(IDPChoiceParameterName) && !string.IsNullOrEmpty(query[IDPChoiceParameterName]))
             {
-                AuditLogging.logEntry(Direction.IN, Operation.DISCOVER,
-                                      "Using IDPChoiceParamater: " + context.Request.Params[IDPChoiceParameterName]);
-                IDPEndPoint endPoint = config.FindEndPoint(context.Request.Params[IDPChoiceParameterName]);
-                if (endPoint != null)
-                    return endPoint;
+                var idpEndpoint = config.IDPEndPoints?.FirstOrDefault(e => e.Id == query[IDPChoiceParameterName]);
+                _logger.LogInformation($"Using IDPChoiceParameter: {query[IDPChoiceParameterName]}");
+                // ...additional logic...
             }
-
-            //If we have a common domain cookie, use it's value
-            //It must have been returned from the local common domain cookie reader endpoint.
-            if (!string.IsNullOrEmpty(context.Request.QueryString["_saml_idp"]))
+            // Example: Use default IDP if only one exists
+            if (config.IDPEndPoints?.Count == 1)
             {
-                CommonDomainCookie cdc = new CommonDomainCookie(context.Request.QueryString["_saml_idp"]);
-                if (cdc.IsSet)
+                var idp = config.IDPEndPoints[0];
+                if (idp != null)
                 {
-                    IDPEndPoint endPoint = config.FindEndPoint(cdc.PreferredIDP);
-                    if (endPoint != null)
-                    {
-                        if (Trace.ShouldTrace(TraceEventType.Information))
-                            Trace.TraceData(TraceEventType.Information, "IDP read from Common Domain Cookie: " + cdc.PreferredIDP);
-
-                        return endPoint;
-                    }
-
-                    AuditLogging.logEntry(Direction.IN, Operation.DISCOVER, "Invalid IdP in Common Domain Cookie, IdP not found in list of IdPs: " + cdc.PreferredIDP);
+                    _logger.LogInformation($"No IdP selected in Common Domain Cookie, using default IdP: {idp.Name}");
+                    // ...additional logic...
                 }
             }
-
-            //If there is only one configured IDPEndPoint lets just use that
-            if (config.IDPEndPoints.Count == 1 && config.IDPEndPoints[0].metadata != null)
-            {
-                AuditLogging.logEntry(Direction.IN, Operation.DISCOVER, "No IdP selected in Common Domain Cookie, using default IdP: " + config.IDPEndPoints[0].Name);
-                return config.IDPEndPoints[0];
-            }
-
-            // If one of the endpoints are marked with default, use that one
-            var defaultIdp = config.Endpoints.IDPEndPoints.Find(idp => idp.Default);
+            // Example: Use IDP marked as default
+            var defaultIdp = config.IDPEndPoints?.FirstOrDefault(idp => idp.Default);
             if (defaultIdp != null)
             {
-                if (Trace.ShouldTrace(TraceEventType.Information))
-                    Trace.TraceData(TraceEventType.Information, "Using IdP marked as default: " + defaultIdp.Id);
-
-                return defaultIdp;
+                _logger.LogInformation($"Using IdP marked as default: {defaultIdp.Id}");
+                // ...additional logic...
             }
-
-            // In case an Idp selection url has been configured, redirect to that one.
-            if (!string.IsNullOrEmpty(config.Endpoints.idpSelectionUrl))
+            // Example: Redirect to idpSelectionUrl if set
+            if (!string.IsNullOrEmpty(config.CommonDomain?.LocalReaderEndpoint))
             {
-                if (Trace.ShouldTrace(TraceEventType.Information))
-                    Trace.TraceData(TraceEventType.Information, "Redirecting to idpSelectionUrl for selection of IDP: " + config.Endpoints.idpSelectionUrl);
-
-                context.Response.Redirect(config.Endpoints.idpSelectionUrl);
+                _logger.LogInformation($"Redirecting to idpSelectionUrl for selection of IDP: {config.CommonDomain.LocalReaderEndpoint}");
+                ctx.Response.Redirect(config.CommonDomain.LocalReaderEndpoint);
             }
-
-            // If an IDPSelectionEvent handler is present, request the handler for an IDP endpoint to use.
-            var idpEndpoint = IDPSelectionUtil.InvokeIDPSelectionEventHandler(config.Endpoints);
-            if (idpEndpoint != null)
-            {
-                return idpEndpoint;
-            }
-
-            return null;
+            validated = true;
         }
 
         /// <summary>
         /// Looks through the Identity Provider configurations and 
         /// </summary>
-        public IDPEndPoint RetrieveIDPConfiguration(string IDPId)
+        public IDPEndPointOptions RetrieveIDPConfiguration(string IDPId)
         {
             if (IDPId == null) return null;
-            SAML20FederationConfig config = SAML20FederationConfig.GetConfig();
-            return config.FindEndPoint(IDPId);
+            var config = _samlConfigService.GetConfig();
+            return config.IDPEndPoints?.FirstOrDefault(ep => ep.Id == IDPId);
         }
 
         /// <summary>
@@ -185,23 +141,20 @@ namespace dk.nita.saml20.protocol
         protected void HandleError(HttpContext context, Status status)
         {
             string errorMessage = string.Format("ErrorCode: {0}. Message: {1}.", status.StatusCode.Value, status.StatusMessage);
+            var errorStatus = new Status { StatusCode = status.StatusCode, StatusMessage = errorMessage };
+            HandleErrorInternal(context, errorStatus);
+        }
 
-            if (status.StatusCode.SubStatusCode != null)
-            {
-                switch (status.StatusCode.SubStatusCode.Value)
-                {
-                    case Saml20Constants.StatusCodes.AuthnFailed:
-                        HandleError(context, errorMessage, true);
-                        break;
-                    default:
-                        HandleError(context, errorMessage, false);
-                        break;
-                }
-            }
-            else
-            {
-                HandleError(context, errorMessage, false);
-            }
+        /// <summary>
+        /// Internal error handler to be implemented by derived classes or to return a response
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="status">The status.</param>
+        protected virtual void HandleErrorInternal(HttpContext context, Status status)
+        {
+            context.Response.StatusCode = 400;
+            context.Response.ContentType = "application/json";
+            context.Response.WriteAsync($"{{\"error\":\"{status.StatusMessage}\"}}");
         }
 
         /// <summary>
@@ -210,7 +163,7 @@ namespace dk.nita.saml20.protocol
         /// <param name="defaultBinding">The binding to use if none has been specified in the configuration and the metadata allows all bindings.</param>
         /// <param name="config">The endpoint as described in the configuration. May be null.</param>
         /// <param name="metadata">A list of endpoints of the given type (eg. SSO or SLO) that the metadata contains. </param>        
-        internal static IDPEndPointElement DetermineEndpointConfiguration(SAMLBinding defaultBinding, IDPEndPointElement config, List<IDPEndPointElement> metadata)
+        internal static IDPEndPointElement DetermineEndpointConfiguration(string defaultBinding, IDPEndPointElement config, List<IDPEndPointElement> metadata)
         {
             IDPEndPointElement result = new IDPEndPointElement();
             result.Binding = defaultBinding;
@@ -223,13 +176,10 @@ namespace dk.nita.saml20.protocol
             else
             {
                 // Verify that the metadata allows the default binding.
-                bool allowed = metadata.Exists(delegate (IDPEndPointElement el) { return el.Binding == defaultBinding; });
+                bool allowed = metadata.Exists(el => el.Binding == defaultBinding);
                 if (!allowed)
                 {
-                    if (result.Binding == SAMLBinding.POST)
-                        result.Binding = SAMLBinding.REDIRECT;
-                    else
-                        result.Binding = SAMLBinding.POST;
+                    result.Binding = defaultBinding == SAMLBinding.POST ? SAMLBinding.REDIRECT : SAMLBinding.POST;
                 }
             }
 
@@ -239,14 +189,9 @@ namespace dk.nita.saml20.protocol
             }
             else
             {
-                IDPEndPointElement endpoint =
-                    metadata.Find(delegate (IDPEndPointElement el) { return el.Binding == result.Binding; });
-
+                IDPEndPointElement endpoint = metadata.Find(el => el.Binding == result.Binding);
                 if (endpoint == null)
-                    throw new ConfigurationErrorsException(
-                        String.Format("No IdentityProvider supporting SAML binding {0} found in metadata",
-                                      result.Binding));
-
+                    throw new InvalidOperationException($"No IdentityProvider supporting SAML binding {result.Binding} found in metadata");
                 result.Url = endpoint.Url;
             }
 

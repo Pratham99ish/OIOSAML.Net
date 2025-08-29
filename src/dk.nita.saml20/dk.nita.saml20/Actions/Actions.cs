@@ -1,19 +1,12 @@
 ﻿using System.Collections.Generic;
-using dk.nita.saml20.config;
 using System;
+using dk.nita.saml20.config;
+using dk.nita.saml20.Configuration;
 
 namespace dk.nita.saml20.Actions
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class Actions
     {
-
-        /// <summary>
-        /// Gets the default actions. 
-        /// </summary>
-        /// <returns></returns>
         public static List<IAction> GetDefaultActions()
         {
             List<IAction> actions = new List<IAction>();
@@ -22,32 +15,26 @@ namespace dk.nita.saml20.Actions
             return actions;
         }
 
-        /// <summary>
-        /// Gets the actions.
-        /// </summary>
-        /// <returns></returns>
-        public static List<IAction> GetActions()
+        public static List<IAction> GetActions(FederationConfigOptions config)
         {
             List<IAction> actions = GetDefaultActions();
-            FederationConfig config = FederationConfig.GetConfig();
-
-            foreach (ActionConfigAbstract ac in config.Actions.ActionList)
+            if (config.Actions?.ActionList != null)
             {
-                if (ac is ActionConfigClear)
-                    actions.Clear();
-                else if (ac is ActionConfigRemove)
+                foreach (var ac in config.Actions.ActionList)
                 {
-                    actions.RemoveAll(delegate(IAction a) { return a.Name == ac.Name; });
+                    // Use Name and Type properties for POCO config
+                    if (string.Equals(ac.Type, "clear", StringComparison.OrdinalIgnoreCase))
+                        actions.Clear();
+                    else if (string.Equals(ac.Type, "remove", StringComparison.OrdinalIgnoreCase))
+                        actions.RemoveAll(a => a.Name == ac.Name);
+                    else if (!string.IsNullOrEmpty(ac.Type) && !string.Equals(ac.Type, "add", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // For custom action types, instantiate by type name
+                        IAction add = (IAction)Activator.CreateInstance(Type.GetType(ac.Type));
+                        actions.Add(add);
+                    }
                 }
-                else if(ac is ActionConfigAdd)
-                {
-                    ActionConfigAdd addAction = (ActionConfigAdd)ac;
-                    IAction add = (IAction)Activator.CreateInstance(Type.GetType(addAction.Type));
-                    actions.Add(add);
-                }
-
             }
-
             return actions;
         }
     }

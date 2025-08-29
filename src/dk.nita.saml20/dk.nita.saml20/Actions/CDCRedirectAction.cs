@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Web;
+﻿using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 using dk.nita.saml20.Identity;
 using dk.nita.saml20.session;
 using dk.nita.saml20.config;
 using dk.nita.saml20.protocol;
+using dk.nita.saml20.Configuration;
 
 namespace dk.nita.saml20.Actions
 {
@@ -12,69 +13,54 @@ namespace dk.nita.saml20.Actions
     /// </summary>
     public class CDCRedirectAction : IAction
     {
-        /// <summary>
-        /// setting name for the identity provider cookie writer url 
-        /// </summary>
         public const string IDPCookieWriterEndPoint = "IDPCookieWriterEndPoint";
-        /// <summary>
-        /// Local return url setting name
-        /// </summary>
         public const string LocalReturnUrl = "LocalReturnUrl";
-        /// <summary>
-        /// TargetResource query string parameter name.
-        /// </summary>
         public const string TargetResource = "TargetResource";
 
         /// <summary>
         /// Action performed during login.
         /// </summary>
-        /// <param name="handler">The handler initiating the call.</param>
-        /// <param name="context">The current http context.</param>
-        /// <param name="assertion">The saml assertion of the currently logged in user.</param>
-        public void LoginAction(AbstractEndpointHandler handler, HttpContext context, Saml20Assertion assertion)
+        public void LoginAction(Saml20AbstractEndpointHandler handler, HttpContext context, Saml20Assertion assertion)
         {
             string idpKey = Saml20PrincipalCache.GetSaml20AssertionLite().Issuer;
-            Saml20SignonHandler h = (Saml20SignonHandler) handler;
-            IDPEndPoint ep = h.RetrieveIDPConfiguration(idpKey);
-            if (ep.CDC.ExtraSettings != null)
+            var h = handler as Saml20SignonHandler;
+            if (h == null)
+                throw new Saml20Exception("Handler is not a Saml20SignonHandler");
+            var ep = h.RetrieveIDPConfiguration(idpKey); // IDPEndPointOptions
+            if (ep?.CDC?.ExtraSettings?.KeyValues != null)
             {
-                List<KeyValue> values = ep.CDC.ExtraSettings.KeyValues;
+                List<KeyValueOptions> values = ep.CDC.ExtraSettings.KeyValues;
 
-                KeyValue idpEndpoint = values.Find(delegate(KeyValue kv) { return kv.Key == IDPCookieWriterEndPoint; });
+                var idpEndpoint = values.Find(kv => kv.Key == IDPCookieWriterEndPoint);
                 if (idpEndpoint == null)
-                    throw new Saml20Exception(@"Please specify """ + IDPCookieWriterEndPoint +
-                                              @""" in Settings element.");
-                
-                KeyValue localReturnPoint = values.Find(delegate(KeyValue kv) { return kv.Key == LocalReturnUrl; });
-                if(localReturnPoint == null)
-                    throw new Saml20Exception(@"Please specify """ + LocalReturnUrl +
-                                              @""" in Settings element.");
+                    throw new Saml20Exception($"Please specify '{IDPCookieWriterEndPoint}' in Settings element.");
+
+                var localReturnPoint = values.Find(kv => kv.Key == LocalReturnUrl);
+                if (localReturnPoint == null)
+                    throw new Saml20Exception($"Please specify '{LocalReturnUrl}' in Settings element.");
 
                 string url = idpEndpoint.Value + "?" + TargetResource + "=" + localReturnPoint.Value;
-
                 context.Response.Redirect(url);
-            }else
+            }
+            else
             {
-                handler.DoRedirect(context);
+                context.Response.Redirect("~/");
             }
         }
 
         /// <summary>
         /// Action performed during logout.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        /// <param name="context">The context.</param>
-        /// <param name="IdPInitiated">During IdP initiated logout some actions such as redirecting should not be performed</param>
-        public void LogoutAction(AbstractEndpointHandler handler, HttpContext context, bool IdPInitiated)
+        public void LogoutAction(Saml20AbstractEndpointHandler handler, HttpContext context, bool IdPInitiated)
         {
             if (!IdPInitiated)
-                handler.DoRedirect(context);
+                context.Response.Redirect("~/");
         }
 
         /// <summary>
         /// <see cref="IAction.SoapLogoutAction"/>
         /// </summary>
-        public void SoapLogoutAction(AbstractEndpointHandler handler, HttpContext context, string userId)
+        public void SoapLogoutAction(Saml20AbstractEndpointHandler handler, HttpContext context, string userId)
         {
             // Do nothing
         }
@@ -84,7 +70,6 @@ namespace dk.nita.saml20.Actions
         /// <summary>
         /// Gets or sets the name of the action.
         /// </summary>
-        /// <value>The name.</value>
         public string Name
         {
             get { return _name; }

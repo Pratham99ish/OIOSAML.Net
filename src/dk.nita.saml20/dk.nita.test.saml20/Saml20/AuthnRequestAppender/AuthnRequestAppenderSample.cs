@@ -1,4 +1,4 @@
-﻿using System.Web;
+﻿using Microsoft.AspNetCore.Http;
 using dk.nita.saml20;
 using dk.nita.saml20.AuthnRequestAppender;
 
@@ -11,6 +11,7 @@ namespace dk.nita.test.Saml20.AuthnRequestAppender
     {
         public void AppendAction(Saml20AuthnRequest authnRequest, HttpRequest request)
         {
+            // Sample implementation for ASP.NET Core
         }
     }
 }

@@ -5,6 +5,8 @@ using dk.nita.saml20.Schema.Core;
 using dk.nita.saml20.Schema.Protocol;
 using dk.nita.saml20.Utils;
 using Saml2.Properties;
+using dk.nita.saml20.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace dk.nita.saml20
 {
@@ -133,20 +135,16 @@ namespace dk.nita.saml20
         /// Returns an instance of the class with meaningful default values set.
         /// </summary>
         /// <returns></returns>
-        public static Saml20LogoutRequest GetDefault()
+        public static Saml20LogoutRequest GetDefault(IServiceProvider serviceProvider)
         {
             Saml20LogoutRequest result = new Saml20LogoutRequest();
             result.SubjectToLogOut = new NameID();
-            //format
-            SAML20FederationConfig config = SAML20FederationConfig.GetConfig();
-
-            if (config.ServiceProvider == null || string.IsNullOrEmpty(config.ServiceProvider.ID))
+            var configService = serviceProvider.GetRequiredService<SAML20FederationConfigService>();
+            var config = configService.GetConfig();
+            if (config.ServiceProvider == null || string.IsNullOrEmpty(config.ServiceProvider.Id))
                 throw new Saml20FormatException(Resources.ServiceProviderNotSet);
-
-            result.Issuer = config.ServiceProvider.ID;
-
+            result.Issuer = config.ServiceProvider.Id;
             return result;
-
         }
     }
 }

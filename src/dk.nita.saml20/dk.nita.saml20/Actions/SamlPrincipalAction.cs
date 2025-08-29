@@ -1,9 +1,9 @@
-﻿using System.Web;
-using System.Web.Security;
+﻿using Microsoft.AspNetCore.Http;
+using System.Security.Principal;
+using System.Security.Claims;
 using dk.nita.saml20.session;
 using dk.nita.saml20.identity;
 using dk.nita.saml20.protocol;
-using System.Security.Principal;
 using dk.nita.saml20.Identity;
 
 namespace dk.nita.saml20.Actions
@@ -13,7 +13,6 @@ namespace dk.nita.saml20.Actions
     /// </summary>
     public class SamlPrincipalAction : IAction
     {
-
         /// <summary>
         /// The default action name
         /// </summary>
@@ -22,30 +21,28 @@ namespace dk.nita.saml20.Actions
         /// <summary>
         /// Action performed during login.
         /// </summary>
-        /// <param name="handler">The handler initiating the call.</param>
-        /// <param name="context">The current http context.</param>
-        /// <param name="assertion">The saml assertion of the currently logged in user.</param>
-        public void LoginAction(AbstractEndpointHandler handler, HttpContext context, Saml20Assertion assertion)
+        public void LoginAction(Saml20AbstractEndpointHandler handler, HttpContext context, Saml20Assertion assertion)
         {
-            FormsAuthentication.SetAuthCookie(Saml20PrincipalCache.GetPrincipal().Identity.Name, false);  
+            // Convert IPrincipal to ClaimsPrincipal if possible
+            var principal = Saml20PrincipalCache.GetPrincipal();
+            if (principal is ClaimsPrincipal claimsPrincipal)
+                context.User = claimsPrincipal;
+            else
+                context.User = new ClaimsPrincipal(new ClaimsIdentity(principal.Identity));
         }
 
         /// <summary>
         /// Action performed during logout.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        /// <param name="context">The context.</param>
-        /// <param name="IdPInitiated">During IdP initiated logout some actions such as redirecting should not be performed</param>
-        public void LogoutAction(AbstractEndpointHandler handler, HttpContext context, bool IdPInitiated)
+        public void LogoutAction(Saml20AbstractEndpointHandler handler, HttpContext context, bool IdPInitiated)
         {
-            FormsAuthentication.SignOut();
-            HttpContext.Current.User = new GenericPrincipal(new GenericIdentity(string.Empty), null); // Makes User.Identity.IsAuthenticated false in the current request.
+            context.User = new ClaimsPrincipal(new ClaimsIdentity(string.Empty));
         }
 
         /// <summary>
         /// <see cref="IAction.SoapLogoutAction"/>
         /// </summary>
-        public void SoapLogoutAction(AbstractEndpointHandler handler, HttpContext context, string userId)
+        public void SoapLogoutAction(Saml20AbstractEndpointHandler handler, HttpContext context, string userId)
         {
             // Do nothing
         }
@@ -58,10 +55,7 @@ namespace dk.nita.saml20.Actions
         /// <value>The name.</value>
         public string Name
         {
-            get
-            {
-                return string.IsNullOrEmpty(_name) ? ACTION_NAME : _name;
-            }
+            get { return string.IsNullOrEmpty(_name) ? ACTION_NAME : _name; }
             set { _name = value; }
         }
     }

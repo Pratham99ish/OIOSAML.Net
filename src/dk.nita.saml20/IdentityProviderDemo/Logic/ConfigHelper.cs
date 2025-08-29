@@ -1,21 +1,25 @@
-﻿using System.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System.IO;
-using System.Web;
 
 namespace IdentityProviderDemo.Logic
 {
     public class ConfigHelper
     {
+        private static IConfiguration? _configuration;
+
+        public static void Initialize(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public static string GetIdpDataDirectory()
         {
-            var dir = ConfigurationManager.AppSettings["IDPDataDirectory"];
-
+            var dir = _configuration?["IDPDataDirectory"];
             if (dir != null && !Path.IsPathRooted(dir))
             {
-                return Path.Combine(HttpContext.Current.Server.MapPath("/"), dir);
+                return Path.Combine(Directory.GetCurrentDirectory(), dir);
             }
-
-            return dir;
+            return dir ?? string.Empty;
         }
     }
 }

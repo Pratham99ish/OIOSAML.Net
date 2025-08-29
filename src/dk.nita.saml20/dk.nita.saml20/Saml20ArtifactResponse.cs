@@ -6,6 +6,8 @@ using dk.nita.saml20.Schema.Core;
 using dk.nita.saml20.Schema.Protocol;
 using dk.nita.saml20.Utils;
 using Saml2.Properties;
+using dk.nita.saml20.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace dk.nita.saml20
 {
@@ -95,17 +97,14 @@ namespace dk.nita.saml20
         /// Gets a default instance of this class with proper values set.
         /// </summary>
         /// <returns></returns>
-        public static Saml20ArtifactResponse GetDefault()
+        public static Saml20ArtifactResponse GetDefault(IServiceProvider serviceProvider)
         {
-            Saml20ArtifactResponse result = new Saml20ArtifactResponse();
-
-            SAML20FederationConfig config = SAML20FederationConfig.GetConfig();
-
-            if (config.ServiceProvider == null || string.IsNullOrEmpty(config.ServiceProvider.ID))
+            var configService = serviceProvider.GetRequiredService<SAML20FederationConfigService>();
+            var config = configService.GetConfig();
+            if (config.ServiceProvider == null || string.IsNullOrEmpty(config.ServiceProvider.Id))
                 throw new Saml20FormatException(Resources.ServiceProviderNotSet);
-
-            result.Issuer = config.ServiceProvider.ID;
-
+            Saml20ArtifactResponse result = new Saml20ArtifactResponse();
+            result.Issuer = config.ServiceProvider.Id;
             return result;
         }
     }

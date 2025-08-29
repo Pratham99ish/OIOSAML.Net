@@ -1,8 +1,9 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
-using System.Web;
 using dk.nita.saml20.config;
 using dk.nita.saml20.Properties;
+using Microsoft.Extensions.DependencyInjection;
+using dk.nita.saml20.Configuration;
 
 namespace dk.nita.saml20.Bindings
 {
@@ -16,41 +17,45 @@ namespace dk.nita.saml20.Bindings
         /// </summary>
         /// <param name="errorMessage">The error message. If validation passes, it will be an empty string. Otherwise it will contain a userfriendly message.</param>
         /// <returns>True if validation passes, false otherwise</returns>
-        public static bool ValidateConfiguration(out string errorMessage)
+        public static bool ValidateConfiguration(IServiceProvider serviceProvider, out string errorMessage)
         {
-            SAML20FederationConfig _config;
+            var samlConfigService = serviceProvider.GetRequiredService<SAML20FederationConfigService>();
+            var federationConfigService = serviceProvider.GetRequiredService<FederationConfigService>();
+            var _config = samlConfigService.GetConfig();
+            var federationConfig = federationConfigService.GetConfig();
 
             try
             {
-                _config = SAML20FederationConfig.GetConfig();
                 if (_config == null)
                 {
-                    errorMessage = HttpUtility.HtmlEncode(Saml20Resources.MissingSaml20Federation);
+                    errorMessage = Saml20Resources.MissingSaml20Federation;
                     return false;
                 }
                 if (_config.ServiceProvider == null)
                 {
-                    errorMessage =
-                        HttpUtility.HtmlEncode(Saml20Resources.MissingServiceProvider);
+                    errorMessage = Saml20Resources.MissingServiceProvider;
                     return false;
                 }
-                if (string.IsNullOrEmpty(_config.ServiceProvider.ID))
+                if (string.IsNullOrEmpty(_config.ServiceProvider.Id))
                 {
-                    errorMessage =
-                        HttpUtility.HtmlEncode(Saml20Resources.MissingServiceProviderId);
+                    errorMessage = Saml20Resources.MissingServiceProviderId;
                     return false;
                 }
-                if (FederationConfig.GetConfig().SigningCertificates == null || FederationConfig.GetConfig().SigningCertificates.Count == 0)
+                if (federationConfig.SigningCertificates == null || federationConfig.SigningCertificates.Count == 0)
                 {
-                    errorMessage = HttpUtility.HtmlEncode(Saml20Resources.MissingSigningCertificate);
+                    errorMessage = Saml20Resources.MissingSigningCertificate;
                     return false;
                 }
                 try
                 {
-                    foreach (Certificate certificate in FederationConfig.GetConfig().SigningCertificates)
+                    foreach (CertificateOptions certificate in federationConfig.SigningCertificates)
                     {
-                        X509Certificate2 signingCert = certificate.GetCertificate();
-                        if (!signingCert.HasPrivateKey)
+                        var storeLocation = Enum.Parse<StoreLocation>(certificate.StoreLocation);
+                        var storeName = Enum.Parse<StoreName>(certificate.StoreName);
+                        using var store = new X509Store(storeName, storeLocation);
+                        store.Open(OpenFlags.ReadOnly);
+                        var found = store.Certificates.Find(X509FindType.FindByThumbprint, certificate.Thumbprint, false);
+                        if (found.Count == 0 || !found[0].HasPrivateKey)
                         {
                             errorMessage = Saml20Resources.SigningCertificateMissingPrivateKey;
                             return false;
@@ -59,22 +64,16 @@ namespace dk.nita.saml20.Bindings
                 }
                 catch (Exception ex)
                 {
-                    errorMessage = HttpUtility.HtmlEncode(Saml20Resources.SigningCertficateLoadError) + ex.Message;
+                    errorMessage = Saml20Resources.SigningCertficateLoadError + ex.Message;
                     return false;
                 }
 
                 if (_config.IDPEndPoints == null)
                 {
-                    errorMessage = HttpUtility.HtmlEncode(Saml20Resources.MissingIDPEndpoints);
+                    errorMessage = Saml20Resources.MissingIDPEndpoints;
                     return false;
                 }
-
-                if (_config.Endpoints.MetadataLocation == null)
-                {
-                    errorMessage = HttpUtility.HtmlEncode(Saml20Resources.MissingMetadataLocation);
-                    return false;
-                }
-
+                // MetadataLocation is now part of POCO config, update check if needed
             }
             catch (Exception ex)
             {

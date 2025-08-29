@@ -1,7 +1,5 @@
 using System;
-using System.Xml;
 using System.Xml.Serialization;
-using dk.nita.saml20.Schema.Core;
 
 namespace dk.nita.saml20.Schema.Metadata
 {
@@ -11,17 +9,16 @@ namespace dk.nita.saml20.Schema.Metadata
     /// </summary>
     [Serializable]
     [XmlType(Namespace = Saml20Constants.METADATA)]
-    [XmlRoot(RequestedAttribute.ELEMENT_NAME, Namespace = Saml20Constants.METADATA, IsNullable = false)]
-    public class RequestedAttribute : SamlAttribute
+    public class RequestedAttribute
     {
         /// <summary>
-        /// The XML Element name of this class
+        /// Gets or sets the name of the requested attribute.
         /// </summary>
-        public new const string ELEMENT_NAME = "RequestedAttribute";
-
-        private bool? isRequiredField;
-
-
+        /// <value>
+        /// The name of the requested attribute.
+        /// </value>
+        [XmlAttribute]
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is required.
@@ -31,33 +28,16 @@ namespace dk.nita.saml20.Schema.Metadata
         /// <value>
         /// 	<c>true</c> if this instance is required; otherwise, <c>false</c>.
         /// </value>
-        [XmlIgnore]
-        public bool? isRequired
-        {
-            get { return isRequiredField; }
-            set { isRequiredField = value; }
-        }
+        [XmlAttribute]
+        public bool isRequired { get; set; }
 
         /// <summary>
-        /// Gets or sets the is required string.
+        /// Gets or sets the format of the name of the requested attribute.
         /// </summary>
-        /// <value>The is required string.</value>
-        [XmlAttribute("isRequired")]
-        public string isRequiredString
-        {
-            get {
-                if (isRequiredField.HasValue)
-                    return XmlConvert.ToString(isRequiredField.Value);
-                else
-                    return null;
-            }
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                    isRequiredField = null;
-                else
-                    isRequiredField = XmlConvert.ToBoolean(value);
-            }
-        }
+        /// <value>
+        /// The format of the name of the requested attribute.
+        /// </value>
+        [XmlAttribute]
+        public string NameFormat { get; set; }
     }
 }

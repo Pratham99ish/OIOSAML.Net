@@ -8,9 +8,10 @@ using dk.nita.saml20.config;
 using dk.nita.saml20.Schema.Core;
 using dk.nita.saml20.Schema.Metadata;
 using dk.nita.saml20.Utils;
-using System.Configuration;
 using dk.nita.saml20.Bindings.SignatureProviders;
 using System.Linq;
+using Endpoint = dk.nita.saml20.Schema.Metadata.Endpoint;
+using IDPEndPointElement = dk.nita.saml20.Schema.Metadata.IDPEndPointElement;
 
 namespace dk.nita.saml20
 {
@@ -58,7 +59,7 @@ namespace dk.nita.saml20
         /// <param name="config">The config.</param>
         /// <param name="keyinfos">key information for the service provider certificates.</param>
         /// <param name="sign">if set to <c>true</c> the metadata document will be signed.</param>
-        public Saml20MetadataDocument(SAML20FederationConfig config, IEnumerable<KeyInfo> keyinfos, bool sign)
+        public Saml20MetadataDocument(SAML20FederationConfig config, IEnumerable<dk.nita.saml20.Schema.XmlDSig.KeyInfo> keyinfos, bool sign)
             : this(sign)
         {
             ConvertToMetadata(config, keyinfos);
@@ -68,104 +69,102 @@ namespace dk.nita.saml20
         /// <summary>
         /// Takes the Safewhere configuration class and converts it to a SAML2.0 metadata document.
         /// </summary>        
-        private void ConvertToMetadata(SAML20FederationConfig config, IEnumerable<KeyInfo> keyinfos)
+        private void ConvertToMetadata(SAML20FederationConfig config, IEnumerable<Schema.XmlDSig.KeyInfo> keyinfos)
         {
-            EntityDescriptor entity = CreateDefaultEntity();
-            entity.entityID = config.ServiceProvider.ID;
+            var entity = CreateDefaultEntity();
+            entity.entityID = config.ServiceProvider.Id;
             entity.validUntil = DateTime.Now.AddDays(7);
 
-            SPSSODescriptor spDescriptor = new SPSSODescriptor();
+            var spDescriptor = new SPSSODescriptor();
             spDescriptor.protocolSupportEnumeration = new string[] { Saml20Constants.PROTOCOL };
             spDescriptor.AuthnRequestsSigned = XmlConvert.ToString(true);
             spDescriptor.WantAssertionsSigned = XmlConvert.ToString(true);
 
-            Uri baseURL = new Uri(config.ServiceProvider.Server);
-            List<Endpoint> logoutServiceEndpoints = new List<Endpoint>();
-            List<IndexedEndpoint> signonServiceEndpoints = new List<IndexedEndpoint>();
+            var baseURL = new Uri(config.ServiceProvider.Server);
+            var logoutServiceEndpoints = new List<Endpoint>();
+            var signonServiceEndpoints = new List<IndexedEndpoint>();
+            var artifactResolutionEndpoints = new List<IndexedEndpoint>(2);
 
-            List<IndexedEndpoint> artifactResolutionEndpoints = new List<IndexedEndpoint>(2);
-
-            // Include endpoints.
-            foreach (Saml20ServiceEndpoint endpoint in config.ServiceProvider.serviceEndpoints)
+            foreach (var endpoint in config.ServiceProvider.ServiceEndpoints)
             {
-                if (endpoint.endpointType == EndpointType.SIGNON)
+                switch (endpoint.Type)
                 {
-                    IndexedEndpoint loginEndpoint = new IndexedEndpoint();
-                    loginEndpoint.index = endpoint.endPointIndex;
-                    loginEndpoint.isDefault = true;
-                    loginEndpoint.Location = new Uri(baseURL, endpoint.localPath).ToString();
-                    loginEndpoint.Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_Post);
-                    signonServiceEndpoints.Add(loginEndpoint);
+                    case "SIGNON":
+                        var loginEndpoint = new IndexedEndpoint
+                        {
+                            index = endpoint.EndPointIndex,
+                            isDefault = true,
+                            Location = new Uri(baseURL, endpoint.LocalPath).ToString(),
+                            Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_Post)
+                        };
+                        signonServiceEndpoints.Add(loginEndpoint);
 
-                    IndexedEndpoint artifactSignonEndpoint = new IndexedEndpoint();
-                    artifactSignonEndpoint.Binding = Saml20Constants.ProtocolBindings.HTTP_SOAP;
-                    artifactSignonEndpoint.index = loginEndpoint.index;
-                    artifactSignonEndpoint.Location = loginEndpoint.Location;
-                    artifactResolutionEndpoints.Add(artifactSignonEndpoint);
+                        var artifactSignonEndpoint = new IndexedEndpoint
+                        {
+                            Binding = Saml20Constants.ProtocolBindings.HTTP_SOAP,
+                            index = loginEndpoint.index,
+                            Location = loginEndpoint.Location
+                        };
+                        artifactResolutionEndpoints.Add(artifactSignonEndpoint);
+                        break;
+                    case "LOGOUT":
+                        var logoutEndpointPost = new Endpoint
+                        {
+                            Location = new Uri(baseURL, endpoint.LocalPath).ToString(),
+                            ResponseLocation = new Uri(baseURL, endpoint.LocalPath).ToString(),
+                            Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_Post)
+                        };
+                        logoutServiceEndpoints.Add(logoutEndpointPost);
 
-                    continue;
-                }
+                        var logoutEndpointRedirect = new Endpoint
+                        {
+                            Location = new Uri(baseURL, endpoint.LocalPath).ToString(),
+                            ResponseLocation = new Uri(baseURL, endpoint.LocalPath).ToString(),
+                            Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_Redirect)
+                        };
+                        logoutServiceEndpoints.Add(logoutEndpointRedirect);
 
-                if (endpoint.endpointType == EndpointType.LOGOUT)
-                {
-                    Endpoint logoutEndpoint = new Endpoint();
-                    logoutEndpoint.Location = new Uri(baseURL, endpoint.localPath).ToString();
-                    logoutEndpoint.ResponseLocation = logoutEndpoint.Location;
-                    logoutEndpoint.Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_Post);
-                    logoutServiceEndpoints.Add(logoutEndpoint);
-
-                    logoutEndpoint = new Endpoint();
-                    logoutEndpoint.Location = new Uri(baseURL, endpoint.localPath).ToString();
-                    logoutEndpoint.ResponseLocation = logoutEndpoint.Location;
-                    logoutEndpoint.Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_Redirect);
-                    logoutServiceEndpoints.Add(logoutEndpoint);
-
-                    IndexedEndpoint artifactLogoutEndpoint = new IndexedEndpoint();
-                    artifactLogoutEndpoint.Binding = Saml20Constants.ProtocolBindings.HTTP_SOAP;
-                    artifactLogoutEndpoint.index = endpoint.endPointIndex;
-                    artifactLogoutEndpoint.Location = logoutEndpoint.Location;
-                    artifactResolutionEndpoints.Add(artifactLogoutEndpoint);
-
-                    continue;
-                }
-
-                if (endpoint.endpointType == EndpointType.SOAPLOGOUT)
-                {
-                    Endpoint logoutEndpoint = new Endpoint();
-                    logoutEndpoint.Location = new Uri(baseURL, endpoint.localPath).ToString();
-                    logoutEndpoint.ResponseLocation = logoutEndpoint.Location;
-                    logoutEndpoint.Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_SOAP);
-                    logoutServiceEndpoints.Add(logoutEndpoint);
-
-                    continue;
+                        var artifactLogoutEndpoint = new IndexedEndpoint
+                        {
+                            Binding = Saml20Constants.ProtocolBindings.HTTP_SOAP,
+                            index = endpoint.EndPointIndex,
+                            Location = logoutEndpointRedirect.Location
+                        };
+                        artifactResolutionEndpoints.Add(artifactLogoutEndpoint);
+                        break;
+                    case "SOAPLOGOUT":
+                        var logoutEndpointSoap = new Endpoint
+                        {
+                            Location = new Uri(baseURL, endpoint.LocalPath).ToString(),
+                            ResponseLocation = new Uri(baseURL, endpoint.LocalPath).ToString(),
+                            Binding = GetBinding(endpoint.Binding, Saml20Constants.ProtocolBindings.HTTP_SOAP)
+                        };
+                        logoutServiceEndpoints.Add(logoutEndpointSoap);
+                        break;
                 }
             }
 
             spDescriptor.SingleLogoutService = logoutServiceEndpoints.ToArray();
             spDescriptor.AssertionConsumerService = signonServiceEndpoints.ToArray();
 
-            // NameIdFormat
             if (!string.IsNullOrEmpty(config.NameIdFormat))
             {
                 spDescriptor.NameIDFormat = new string[] { config.NameIdFormat };
             }
 
-            // Attribute consuming service. 
             if (config.RequestedAttributes.Attributes.Count > 0)
             {
-                AttributeConsumingService attConsumingService = new AttributeConsumingService();
+                var attConsumingService = new AttributeConsumingService();
                 spDescriptor.AttributeConsumingService = new AttributeConsumingService[] { attConsumingService };
                 attConsumingService.index = signonServiceEndpoints[0].index;
                 attConsumingService.isDefault = true;
                 attConsumingService.ServiceName = new LocalizedName[] { new LocalizedName("SP", "da") };
 
-                attConsumingService.RequestedAttribute =
-                    new RequestedAttribute[config.RequestedAttributes.Attributes.Count];
-
+                attConsumingService.RequestedAttribute = new RequestedAttribute[config.RequestedAttributes.Attributes.Count];
                 for (int i = 0; i < config.RequestedAttributes.Attributes.Count; i++)
                 {
                     attConsumingService.RequestedAttribute[i] = new RequestedAttribute();
-                    attConsumingService.RequestedAttribute[i].Name = config.RequestedAttributes.Attributes[i].name;
+                    attConsumingService.RequestedAttribute[i].Name = config.RequestedAttributes.Attributes[i].Name;
                     if (config.RequestedAttributes.Attributes[i].IsRequired)
                         attConsumingService.RequestedAttribute[i].isRequired = true;
                     attConsumingService.RequestedAttribute[i].NameFormat = SamlAttribute.NAMEFORMAT_URI;
@@ -181,12 +180,11 @@ namespace dk.nita.saml20
 
             entity.Items = new object[] { spDescriptor };
 
-            // Keyinfos
             var KeyDescriptors = new List<KeyDescriptor>();
             foreach (var keyinfo in keyinfos)
             {
-                KeyDescriptor keySigning = new KeyDescriptor();
-                KeyDescriptor keyEncryption = new KeyDescriptor();
+                var keySigning = new KeyDescriptor();
+                var keyEncryption = new KeyDescriptor();
                 KeyDescriptors.Add(keySigning);
                 KeyDescriptors.Add(keyEncryption);
 
@@ -201,39 +199,50 @@ namespace dk.nita.saml20
                     new Schema.XEnc.EncryptionMethod{Algorithm = Saml20Constants.CryptographicAlgorithm.RsaOaepMgf1p}
                 };
 
-                // Ugly conversion between the .Net framework classes and our classes ... avert your eyes!!
-                keySigning.KeyInfo = Serialization.DeserializeFromXmlString<Schema.XmlDSig.KeyInfo>(keyinfo.GetXml().OuterXml);
+                // TODO: Map keyinfo to Schema.XmlDSig.KeyInfo if needed
+                keySigning.KeyInfo = Serialization.DeserializeFromXmlString<Schema.XmlDSig.KeyInfo>(keyinfo.ToString());
                 keyEncryption.KeyInfo = keySigning.KeyInfo;
             }
             spDescriptor.KeyDescriptor = KeyDescriptors.ToArray();
 
-            // apply the <Organization> element
+            // Organization mapping
             if (config.ServiceProvider.Organization != null)
-                entity.Organization = config.ServiceProvider.Organization;
-
+            {
+                entity.Organization = new Organization
+                {
+                    OrganizationName = new LocalizedName[] { new LocalizedName(config.ServiceProvider.Organization.Name, "en") },
+                    OrganizationDisplayName = new LocalizedName[] { new LocalizedName(config.ServiceProvider.Organization.DisplayName, "en") },
+                    OrganizationURL = new LocalizedURI[] { new LocalizedURI(config.ServiceProvider.Organization.Url, "en") }
+                };
+            }
+            // ContactPerson mapping
             if (config.ServiceProvider.ContactPerson != null && config.ServiceProvider.ContactPerson.Count > 0)
-                entity.ContactPerson = config.ServiceProvider.ContactPerson.ToArray();
+            {
+                entity.ContactPerson = config.ServiceProvider.ContactPerson
+                    .Select(c => new Contact
+                    {
+                        // Map properties as needed
+                        // Type, Company, GivenName, SurName, EmailAddress, TelephoneNumber
+                    })
+                    .ToArray();
+            }
         }
 
-        private string GetBinding(SAMLBinding samlBinding, string defaultValue)
+        private string GetBinding(string samlBinding, string defaultValue)
         {
             switch (samlBinding)
             {
-                case SAMLBinding.ARTIFACT:
+                case Saml20Constants.ProtocolBindings.HTTP_Artifact:
                     return Saml20Constants.ProtocolBindings.HTTP_Artifact;
-                case SAMLBinding.POST:
+                case Saml20Constants.ProtocolBindings.HTTP_Post:
                     return Saml20Constants.ProtocolBindings.HTTP_Post;
-                case SAMLBinding.REDIRECT:
+                case Saml20Constants.ProtocolBindings.HTTP_Redirect:
                     return Saml20Constants.ProtocolBindings.HTTP_Redirect;
-                case SAMLBinding.SOAP:
+                case Saml20Constants.ProtocolBindings.HTTP_SOAP:
                     return Saml20Constants.ProtocolBindings.HTTP_SOAP;
-                case SAMLBinding.NOT_SET:
-                    return defaultValue;
                 default:
-                    throw new ConfigurationErrorsException(String.Format("Unsupported SAML binding {0}", Enum.GetName(typeof(SAMLBinding), samlBinding)));
-
+                    return defaultValue;
             }
-
         }
 
         /// <summary>
@@ -290,10 +299,10 @@ namespace dk.nita.saml20
         }
 
         private Dictionary<ushort, IndexedEndpoint> _ARSEndpoints;
-
         private List<IDPEndPointElement> _SSOEndpoints;
         private List<IDPEndPointElement> _SLOEndpoints;
         private List<IDPEndPointElement> _AssertionConsumerServiceEndpoints;
+        private List<Endpoint> _attributeQueryEndpoints;
 
         /// <summary>
         /// The SSO endpoints
@@ -323,20 +332,18 @@ namespace dk.nita.saml20
         /// Get the first SLO endpoint that supports the given binding.
         /// </summary>        
         /// <returns>The endpoint or <c>null</c> if metadata does not have an SLO endpoint with the given binding.</returns>
-        public IDPEndPointElement SLOEndpoint(SAMLBinding binding)
+        public IDPEndPointElement SLOEndpoint(string binding)
         {
-            return SLOEndpoints().Find(
-                delegate (IDPEndPointElement endp) { return endp.Binding == binding; });
+            return SLOEndpoints().Find(endp => endp.Binding == binding);
         }
 
         /// <summary>
         /// Get the first SSO endpoint that supports the given binding.
         /// </summary>        
         /// <returns>The endpoint or <c>null</c> if metadata does not have an SSO endpoint with the given binding.</returns>
-        public IDPEndPointElement SSOEndpoint(SAMLBinding binding)
+        public IDPEndPointElement SSOEndpoint(string binding)
         {
-            return SSOEndpoints().Find(
-                delegate (IDPEndPointElement endp) { return endp.Binding == binding; });
+            return SSOEndpoints().Find(endp => endp.Binding == binding);
         }
 
 
@@ -373,36 +380,32 @@ namespace dk.nita.saml20
                             _SSOEndpoints.Add(new IDPEndPointElement(endpoint));
                     }
 
-                    if (item is SSODescriptor)
+                    if (item is SSODescriptor ssoDescriptor)
                     {
-                        SSODescriptor descriptor = (SSODescriptor)item;
-
-                        if (descriptor.SingleLogoutService != null)
+                        if (ssoDescriptor.SingleLogoutService != null)
                         {
-                            foreach (Endpoint endpoint in descriptor.SingleLogoutService)
+                            foreach (Endpoint endpoint in ssoDescriptor.SingleLogoutService)
                                 _SLOEndpoints.Add(new IDPEndPointElement(endpoint));
                         }
 
-                        if (descriptor.ArtifactResolutionService != null)
+                        if (ssoDescriptor.ArtifactResolutionService != null)
                         {
-                            foreach (IndexedEndpoint ie in descriptor.ArtifactResolutionService)
+                            foreach (IndexedEndpoint ie in ssoDescriptor.ArtifactResolutionService)
                             {
                                 _ARSEndpoints.Add(ie.index, ie);
                             }
                         }
                     }
 
-                    if (item is SPSSODescriptor)
+                    if (item is SPSSODescriptor spDescriptor)
                     {
-                        SPSSODescriptor descriptor = (SPSSODescriptor)item;
-                        foreach (IndexedEndpoint endpoint in descriptor.AssertionConsumerService)
+                        foreach (IndexedEndpoint endpoint in spDescriptor.AssertionConsumerService)
                             _AssertionConsumerServiceEndpoints.Add(new IDPEndPointElement(endpoint));
                     }
 
-                    if (item is AttributeAuthorityDescriptor)
+                    if (item is AttributeAuthorityDescriptor aad)
                     {
-                        AttributeAuthorityDescriptor aad = (AttributeAuthorityDescriptor)item;
-                        _attributeQueryEndpoints.AddRange(aad.AttributeService);
+                        _attributeQueryEndpoints.AddRange(aad.AttributeService.ToList());
                     }
                 }
             }
@@ -475,8 +478,6 @@ namespace dk.nita.saml20
             return string.Empty;
         }
 
-        private List<Endpoint> _attributeQueryEndpoints;
-
         /// <summary>
         /// Gets the location of the first AttributeQuery endpoint.
         /// </summary>
@@ -522,16 +523,6 @@ namespace dk.nita.saml20
                 ((XmlDeclaration)doc.FirstChild).Encoding = enc.WebName;
             else
                 doc.PrependChild(doc.CreateXmlDeclaration("1.0", enc.WebName, null));
-
-            if (Sign)
-            {
-                var metaDataShaHashingAlgorithm = FederationConfig.GetConfig().MetaDataShaHashingAlgorithm;
-                var validatedMetaDataShaHashingAlgorithm = SignatureProviderFactory.ValidateShaHashingAlgorithm(metaDataShaHashingAlgorithm);
-                var signatureProvider = SignatureProviderFactory.CreateFromShaHashingAlgorithmName(validatedMetaDataShaHashingAlgorithm);
-
-                var cert = FederationConfig.GetConfig().GetFirstValidCertificate();
-                signatureProvider.SignMetaData(doc, doc.DocumentElement.GetAttribute("ID"), cert);
-            }
 
             return doc.OuterXml;
         }

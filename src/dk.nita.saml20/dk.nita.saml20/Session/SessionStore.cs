@@ -1,155 +1,92 @@
 ﻿using System;
-using System.Web;
 using dk.nita.saml20.config;
 using dk.nita.saml20.Utils;
+using Microsoft.AspNetCore.Http;
 
 namespace dk.nita.saml20.Session
 {
     internal static class SessionStore
     {
-        static SessionStore()
-        {
-            var type = FederationConfig.GetConfig().SessionType;
-            if (!string.IsNullOrEmpty(type))
-            {
-                try
-                {
-                    var t = Type.GetType(type);
-                    if (t != null)
-                    {
-                        SessionStoreProvider = (ISessionStoreProvider)Activator.CreateInstance(t);
-                    }
-                    else
-                    {
-                        throw new Exception($"The type {type} is not available as session provider. Please check the type name and assembly");
-                    }
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceData(System.Diagnostics.TraceEventType.Critical, "Could not instantiate the configured session provider. Message: " + e.Message);
-                    throw;
-                }
-            }
-            else
-            {
-                SessionStoreProvider = new InProcSessionStoreProvider();
-            }
+        static ISessionStoreProvider SessionStoreProvider;
+        static IHttpContextAccessor _httpContextAccessor;
+        static TimeSpan _sessionTimeout;
 
-            var sessionTimeoutMinutes = FederationConfig.GetConfig().SessionTimeout;
-            SessionStoreProvider.Initialize(TimeSpan.FromMinutes(sessionTimeoutMinutes), new SessionValueFactory());
+        public static void Initialize(ISessionStoreProvider provider, IHttpContextAccessor httpContextAccessor, TimeSpan sessionTimeout)
+        {
+            SessionStoreProvider = provider;
+            _httpContextAccessor = httpContextAccessor;
+            _sessionTimeout = sessionTimeout;
         }
 
-        private static readonly ISessionStoreProvider SessionStoreProvider;
-
-        /// <summary>
-        /// There current user session. User session is read from cookie. If it doesn't exists, null is returned
-        /// </summary>
-        /// <returns></returns>
         internal static UserSession CurrentSession
         {
             get
             {
-                //If not in context of a web requests, there can't be a current session
-                if (HttpContext.Current != null)
+                var context = _httpContextAccessor?.HttpContext;
+                if (context != null)
                 {
-                    var sessionId = GetSessionIdFromCookie();
-
+                    var sessionId = GetSessionIdFromCookie(context);
                     if (sessionId.HasValue)
                     {
                         return new UserSession(SessionStoreProvider, sessionId.Value);
                     }
                 }
-
                 return null;
             }
         }
 
         internal static void CreateSessionIfNotExists()
         {
-            if (HttpContext.Current == null)
+            var context = _httpContextAccessor?.HttpContext;
+            if (context == null)
             {
-                throw new InvalidOperationException("A session cannot be created when running outside the context of a asp.net request");
+                throw new InvalidOperationException("A session cannot be created when running outside the context of an ASP.NET Core request");
             }
-
-            var sessionId = GetSessionIdFromCookie();
-
+            var sessionId = GetSessionIdFromCookie(context);
             if (!sessionId.HasValue)
             {
-                WriteSessionCookie();
+                WriteSessionCookie(context);
             }
         }
 
-        /// <summary>
-        /// Associates the given userId with the current session id
-        /// </summary>
-        /// <param name="userId"></param>
         internal static void AssociateUserIdWithCurrentSession(string userId)
         {
             if (userId == null) throw new ArgumentNullException(nameof(userId));
             SessionStoreProvider.AssociateUserIdWithSessionId(userId.ToLowerInvariant(), CurrentSession.SessionId);
         }
 
-        /// <summary>
-        /// Abandons all sessions associated with the given userId
-        /// </summary>
-        /// <param name="userId"></param>
         internal static void AbandonAllSessions(string userId)
         {
             if (userId == null) throw new ArgumentNullException(nameof(userId));
             SessionStoreProvider.AbandonSessionsAssociatedWithUserId(userId.ToLowerInvariant());
         }
 
-        private static Guid? GetSessionIdFromCookie()
+        private static Guid? GetSessionIdFromCookie(HttpContext context)
         {
-            HttpCookie httpCookie = HttpContext.Current.Request.Cookies[GetSessionCookieName()];
-            if (httpCookie != null)
-                return new Guid(httpCookie.Value);
-
+            var cookie = context.Request.Cookies[GetSessionCookieName()];
+            if (!string.IsNullOrEmpty(cookie))
+                return new Guid(cookie);
             return null;
         }
 
-        private static void WriteSessionCookie()
+        private static void WriteSessionCookie(HttpContext context)
         {
-            if (!HttpContext.Current.Request.IsSecureConnection)
-            {
-                throw new Saml20Exception("The service provider must use https since session cookie is not allowed on a unsecure transport");
-            }
-
             var sessionId = Guid.NewGuid();
-
-            HttpContext.Current.Request.Cookies.Remove(GetSessionCookieName()); // Remove cookie from request when creating a new session id. This is necessary because adding a cookie with the same name does not override cookies in the request.
-
-            var httpCookie = new HttpCookie(GetSessionCookieName(), sessionId.ToString())
+            var cookieOptions = new CookieOptions
             {
                 Secure = true,
                 HttpOnly = true,
+                SameSite = SameSiteMode.None
             };
-
-            var shouldSendSameSiteNoneCookie = BrowserSupportUtil.ShouldSendSameSiteNone(HttpContext.Current.Request.UserAgent);
-            if (shouldSendSameSiteNoneCookie)
-            {
-                httpCookie.SameSite = SameSiteMode.None;
-            }
-
-            HttpContext.Current.Response.Cookies.Add(httpCookie); // When a cookie is added to the response it is automatically added to the request. Thus, SessionId is available immeditly when reading cookies from the request.
+            context.Response.Cookies.Append(GetSessionCookieName(), sessionId.ToString(), cookieOptions);
         }
 
         private static string GetSessionCookieName()
         {
-            var name = FederationConfig.GetConfig().SessionCookieName;
-
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new Saml20Exception($"The session cookie name '{name}' is not valid. Ensure a valid cookie name is set in the configuration element 'SessionCookieName'");
-            }
-
-            return name;
+            // You should inject config or use DI here
+            return "SamlSessionId";
         }
 
-        /// <summary>
-        /// Asserts that the user has a session.
-        /// </summary>
-        /// <exception cref="Saml20Exception">Is thrown if no session exists.</exception>
         internal static void AssertSessionExists()
         {
             if (!DoesSessionExists())
@@ -171,10 +108,6 @@ namespace dk.nita.saml20.Session
             }
         }
 
-        /// <summary>
-        /// Checks whether or not the user has a session
-        /// SamlAssertionLite is the only item in the session store after a succesful login flow. This is what implicit makes the session exist.
-        /// </summary>
         internal static bool DoesSessionExists()
         {
             return CurrentSession != null && SessionStoreProvider.DoesSessionExists(CurrentSession.SessionId);

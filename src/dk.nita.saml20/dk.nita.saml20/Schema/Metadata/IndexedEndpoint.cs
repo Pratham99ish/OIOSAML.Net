@@ -1,5 +1,4 @@
 using System;
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace dk.nita.saml20.Schema.Metadata
@@ -11,17 +10,13 @@ namespace dk.nita.saml20.Schema.Metadata
     [Serializable]
     [XmlType(Namespace=Saml20Constants.METADATA)]
     [XmlRoot(ELEMENT_NAME, Namespace = Saml20Constants.METADATA, IsNullable = false)]
-    public class IndexedEndpoint : Endpoint {
-        
+    public class IndexedEndpoint : Endpoint
+    {
         /// <summary>
         /// The XML Element name of this class
         /// </summary>
         public new const string ELEMENT_NAME = "ArtifactResolutionService";
 
-        private ushort indexField;
-        
-        private bool? isDefaultField;
-        
         /// <summary>
         /// Gets or sets the index.
         /// A required attribute that assigns a unique integer value to the endpoint so that it can be
@@ -31,14 +26,7 @@ namespace dk.nita.saml20.Schema.Metadata
         /// </summary>
         /// <value>The index.</value>
         [XmlAttribute]
-        public ushort index {
-            get {
-                return indexField;
-            }
-            set {
-                indexField = value;
-            }
-        }
+        public ushort index { get; set; }
 
 
         /// <summary>
@@ -49,37 +37,7 @@ namespace dk.nita.saml20.Schema.Metadata
         /// <value>
         /// 	<c>true</c> if this instance is default; otherwise, <c>false</c>.
         /// </value>
-        [XmlIgnore]
-        public bool? isDefault {
-            get {
-                return isDefaultField;
-            }
-            set {
-                isDefaultField = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the isDefault string.
-        /// </summary>
-        /// <value>The isDefault string.</value>
-        [XmlAttribute("isDefault")]
-        public string isDefaultString
-        {
-            get
-            {
-                if (isDefaultField == null)
-                    return null;
-                else
-                    return XmlConvert.ToString(isDefaultField.Value);
-            }
-            set
-            {
-                if (value == null)
-                    isDefaultField = null;
-                else
-                    isDefaultField = XmlConvert.ToBoolean(value);
-            }
-        }
+        [XmlAttribute]
+        public bool isDefault { get; set; }
     }
 }
